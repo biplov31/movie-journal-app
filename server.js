@@ -1,0 +1,70 @@
+// npm init; npm install express --save
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');  // npm install body-parser --save
+const { request, response } = require('express');
+const MongoClient = require('mongodb').MongoClient // npm install mongodb --save
+const PORT = 3000
+require('dotenv').config()
+
+let db, 
+  connectionString = process.env.DB_STRING,
+  dbName = 'movie-reviews'
+
+MongoClient.connect(connectionString, {useUnifiedTopology: true})
+  .then(client => {
+    console.log('Connected to database.')
+    db = client.db(dbName)
+    const reviewCollection = db.collection('reviews')
+    app.set('view engine', 'ejs')  // npm install ejs --save
+    app.use(bodyParser.urlencoded({extended: true}))
+    app.use(bodyParser.json())
+    app.use(express.static('public'))
+
+    app.get('/', async (req, res) => {
+      console.log(req)
+      reviewCollection.find({movie: 'the kid detective'}).sort({likes: -1}).toArray()
+        .then(data => {
+          res.render('index.ejs', {reviews: data})          
+        })
+        .catch(error => {console.error(error)})
+      // res.sendFile(__dirname + '/index.html')
+    })
+
+    app.post('/addReview', (req, res) => {
+      console.log(req)
+      reviewCollection.insertOne({movie: req.body.movie, review: req.body.review, score: req.body.score, likes: 0})
+        .then(result => {
+          console.log(result)
+          res.redirect('/')
+        }) 
+        .catch(error => console.error(error))
+    })
+
+    app.delete('/deleteReview', (req, res) => {
+      console.log(req.body)
+      reviewCollection.deleteOne({review: req.body.reviewToDel})  // on our database we're looking for an object that has a review property of what came through the request
+      .then(data => {
+        res.json("Delete succesfull.")
+      })
+      .catch(error => console.error(error))
+    })
+
+    app.put('/likeReview', (req, res) => {
+      reviewCollection.updateOne({review: req.body.reviewStatement}, {
+        $set: {
+          likes: request.body.likesCount + 1
+        }
+      })
+      .then(result => {
+        response.json('Like Added')
+      })
+      .catch(error => console.error(error))
+    })
+
+    app.listen(process.env.PORT || PORT, () => {
+      console.log(`Server running on port ${PORT}`)
+    })
+  })
+
+   
