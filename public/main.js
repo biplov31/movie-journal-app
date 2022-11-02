@@ -1,19 +1,20 @@
 document.querySelector('.search-btn').addEventListener('click', getMovie)
 
-function getMovie(){
-  const movieName = document.querySelector('.movie-search').value
-  const finalName = movieName.split(' ').join('+')
+async function getMovie(){
+  const enteredMovie = document.querySelector('.movie-search').value
+  const finalName = enteredMovie.split(' ').join('+')
 
-  fetch('', {   
-    method: 'get', 
-    header: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      'movie-name': movieName
-    })
-  }) 
-  .then(res => {
-    if(res.ok) return res.json()
-  })
+  try{
+    const response = await fetch('', {   
+      method: 'get', 
+      header: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        'movieName': enteredMovie
+      })
+    }) 
+  } catch(err) {
+    console.log(err)
+  }  
 
   // fetching movie from the API
   const url = `http://www.omdbapi.com/?t=${finalName}&apikey=75dd0b86`
@@ -42,36 +43,53 @@ Array.from(likeButton).forEach((element) => {
 })
 
 async function deleteReview(){
-  const reviewStatement = this.parentNode.childNodes[3].innerText
+  // const reviewStatement = this.parentNode.childNodes[1].innerText
+ 
   // const reviewScore = this.parentNode.childNodes[3].innerText
-  fetch('deleteReview', {   // we don't need to enter the full url in our fetch becuase we're in our local server; localhost:3000 + /deleteReview
-    method: 'delete', 
-    header: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      'reviewToDel': reviewStatement
-    })
-  })
-  .then(res => {
-    if(res.ok) return res.json()
-    location.reload()
-  })
-}
-
-async function likeReview(){
-  const reviewStatement = this.parentNode.childNodes[4].innerText
-  const totaLikes = this.parentNode.childNodes[7].innerText
+  // fetch('deleteReview', {   // we don't need to enter the full url in our fetch becuase we're in our local server; localhost:3000 + /deleteReview
+  //   method: 'delete', 
+  //   header: {'Content-Type': 'application/json'},
+  //   body: JSON.stringify({
+  //     'reviewToDel': reviewStatement
+  //   })
+  // })
+  // .then(res => {
+  //   if(res.ok) return res.json()
+  //   location.reload()
+  // })
   try{
-    const response = await fetch('likeReview', {
-      method: 'put', 
+    const response = await fetch('deleteReview', {
+      method: 'delete', 
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        'reviewToLike': reviewStatement,
-        'likeCount': totaLikes
+        'reviewToDel': reviewStatement
       })
     })
     const data = await response.json()
     console.log(data)
-    location.reload()
+    location.reload(true)
+    
+  } catch(err) {
+    console.log(err)
+  }
+}
+
+async function likeReview(){
+  const reviewStatement = this.parentNode.childNodes[1].innerText
+  const totalLikes = Number(this.parentNode.childNodes[5].innerText)
+  // console.log(reviewStatement, totalLikes)
+  try{
+    const response = await fetch('addOneLike', {
+      method: 'put', 
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        'reviewToLike': reviewStatement,
+        'likeCount': totalLikes
+      })
+    })
+    const data = await response.json()
+    console.log(data)
+    location.reload(true)
     
   } catch(err) {
     console.log(err)

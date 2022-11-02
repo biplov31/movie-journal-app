@@ -23,7 +23,7 @@ MongoClient.connect(connectionString, {useUnifiedTopology: true})
 
     app.get('/', async (req, res) => {
       console.log(req)
-      reviewCollection.find({movie: 'the kid detective'}).sort({likes: -1}).toArray()
+      reviewCollection.find({movie: req.body.movieName}).sort({likes: -1}).toArray()
         .then(data => {
           res.render('index.ejs', {reviews: data})          
         })
@@ -50,14 +50,14 @@ MongoClient.connect(connectionString, {useUnifiedTopology: true})
       .catch(error => console.error(error))
     })
 
-    app.put('/likeReview', (req, res) => {
-      reviewCollection.updateOne({review: req.body.reviewStatement}, {
+    app.put('/addOneLike', (req, res) => {
+      reviewCollection.updateOne({review: req.body.reviewToLike}, {
         $set: {
-          likes: request.body.likesCount + 1
+          likes: req.body.likeCount + 1
         }
       })
       .then(result => {
-        response.json('Like Added')
+        res.json('Like Added')
       })
       .catch(error => console.error(error))
     })
