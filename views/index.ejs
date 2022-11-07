@@ -12,11 +12,11 @@
   <div class="container">
     <h1 class="site-name">Movie<span>Night</span></h1>
     <div class="form-section">
-      <form action="/addReview" method="POST">
+      <form action="" method="">
         <p>What did you watch today?</p>
         <input type="text" name="movie" class="movie-search" placeholder="Enter the movie name...">
         <button type="button" class="search-btn">Search</button>
-      <!-- </form> -->
+      </form>
     </div>  
 
     <div class="movie-info">
@@ -24,11 +24,12 @@
       <h2 class="title"></h2>
       <h5 class="genre"></h5>
       <h5 class="actors"></h5>
-      <p class="plot"></p>
+      <p class="plot hide-content"></p>
     </div>
 
     <div class="review-section">
-      <!-- <form action="/reviews" method="POST"> -->
+      <form action="/addReview" method="POST">
+        <input name="movieID" id="movieID" type="text">
         <div class="slider">
           <p>Rate your experience.</p>
           <input type="range" name="score" min="0" max="10" step="0.1" value="0" oninput="rangeValue.innerText = this.value">

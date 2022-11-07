@@ -58,15 +58,19 @@ html{
   height: 50vh;
   width: 40vw;
   overflow: hidden;
+  background-position: center;
 }
 .poster{
   margin: auto;
   width: 100%;
   object-fit: cover;
-  object-position: center;
+  background-position: center;
 }
 .genre{
   color: #d4aa11;
+}
+.hide-content{
+  display: none;
 }
 .plot{
   /* margin-top: 10px; */
@@ -98,6 +102,9 @@ html{
   /* align-items: center;
   justify-content: center; */
 }
+#movieID{
+  display: none;
+} 
 .slider{
   margin: 2rem auto 0.5rem auto;
   width: 25%;
@@ -154,6 +161,7 @@ html{
   font-weight: 600;
 }
 .review-list{
+  padding-top: 20px;
   margin: 1rem auto 5rem auto;
   outline: 1px solid #171717;
   display: flex;
@@ -161,7 +169,7 @@ html{
   justify-content: center;
   flex-direction: column;
   width: 70%;
-  max-height: 500px;
+  height: 500px;
   overflow-y: scroll;
   /* position: relative; */
 }

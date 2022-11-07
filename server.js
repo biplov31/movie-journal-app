@@ -22,18 +22,28 @@ MongoClient.connect(connectionString, {useUnifiedTopology: true})
     app.use(express.static('public'))
 
     app.get('/', async (req, res) => {
-      console.log(req)
-      reviewCollection.find({movie: req.body.movieName}).sort({likes: -1}).toArray()
+      reviewCollection.find().sort({likes: -1}).toArray()
         .then(data => {
           res.render('index.ejs', {reviews: data})          
         })
         .catch(error => {console.error(error)})
-      // res.sendFile(__dirname + '/index.html')
     })
 
+    // app.get('/', async (req, res) => {
+    //   res.render('index.ejs', {reviews: data})          
+        
+    // })
+
+    // app.get('/getReview/:movieId', (req, res) => {
+    //   reviewCollection.find().toArray()
+    //     .then(data => {
+    //       res.render('index.ejs', {reviews: data})
+    //     })
+    // })
+
     app.post('/addReview', (req, res) => {
-      console.log(req)
-      reviewCollection.insertOne({movie: req.body.movie, review: req.body.review, score: req.body.score, likes: 0})
+      console.log(req.body)
+      reviewCollection.insertOne({movieId: req.body.movieID, review: req.body.review, score: req.body.score, likes: 0})
         .then(result => {
           console.log(result)
           res.redirect('/')
@@ -42,7 +52,6 @@ MongoClient.connect(connectionString, {useUnifiedTopology: true})
     })
 
     app.delete('/deleteReview', (req, res) => {
-      console.log(req.body)
       reviewCollection.deleteOne({review: req.body.reviewToDel})  // on our database we're looking for an object that has a review property of what came through the request
       .then(data => {
         res.json("Delete succesfull.")
@@ -57,7 +66,7 @@ MongoClient.connect(connectionString, {useUnifiedTopology: true})
         }
       })
       .then(result => {
-        res.json('Like Added')
+        res.json('Like added.')
       })
       .catch(error => console.error(error))
     })
