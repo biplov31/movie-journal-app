@@ -6,7 +6,7 @@ async function getMovie(){
   const finalName = enteredMovie.split(' ').join('+') 
 
   // fetching movie from the API
-  const url = `http://www.omdbapi.com/?t=${finalName}&apikey=75dd0b86`
+  const url = `https://www.omdbapi.com/?t=${finalName}&apikey=75dd0b86`
   let movieId = document.querySelector('#movieID').value
 
   fetch(url)
