@@ -29,13 +29,18 @@ MongoClient.connect(connectionString, {useUnifiedTopology: true})
         .catch(error => {console.error(error)})
     })
 
-    // app.get('/', async (req, res) => {
-    //   res.render('index.ejs', {reviews: data})          
-        
+    // app.get(['/', '/:movieId'], (req, res) => {
+    //   const movie_id = req.params.movieId
+    //   // console.log(movie_id)
+    //   reviewCollection.find({movieId: movie_id}).toArray()
+    //     .then(data => {
+    //       res.render('index.ejs', {reviews: data})
+    //     })
     // })
 
     // app.get('/getReview/:movieId', (req, res) => {
-    //   reviewCollection.find().toArray()
+    //   const movie_id = req.params.movieId
+    //   reviewCollection.find({movieId: movie_id}).toArray()
     //     .then(data => {
     //       res.render('index.ejs', {reviews: data})
     //     })
@@ -43,10 +48,10 @@ MongoClient.connect(connectionString, {useUnifiedTopology: true})
 
     app.post('/addReview', (req, res) => {
       console.log(req.body)
-      reviewCollection.insertOne({movieId: req.body.movieID, review: req.body.review, score: req.body.score, likes: 0})
+      reviewCollection.insertOne({movieId: req.body.movieId, review: req.body.review, score: req.body.score, likes: 0})
         .then(result => {
-          console.log(result)
-          res.redirect('/')
+          // console.log(result)
+          res.send({review: req.body.review, score: req.body.score, likes: 0})
         }) 
         .catch(error => console.error(error))
     })
@@ -54,7 +59,7 @@ MongoClient.connect(connectionString, {useUnifiedTopology: true})
     app.delete('/deleteReview', (req, res) => {
       reviewCollection.deleteOne({review: req.body.reviewToDel})  // on our database we're looking for an object that has a review property of what came through the request
       .then(data => {
-        res.json("Delete succesfull.")
+        res.json("Delete succesful.")
       })
       .catch(error => console.error(error))
     })
@@ -65,8 +70,9 @@ MongoClient.connect(connectionString, {useUnifiedTopology: true})
           likes: req.body.likeCount + 1
         }
       })
+      // client-side code sends a reviewToLike and its likeCount to the server using a fetch request, the server.js increments the likes in the database and also sends it back to main.js as updatedLikes. main.js then uses updatedLikes to update the DOM
       .then(result => {
-        res.json('Like added.')
+        res.send({updatedLikes: req.body.likeCount + 1})
       })
       .catch(error => console.error(error))
     })

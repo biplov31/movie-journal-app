@@ -28,15 +28,19 @@
     </div>
 
     <div class="review-section">
-      <form action="/addReview" method="POST">
-        <input name="movieID" id="movieID" type="text">
+      <form action="/addReview" method="POST" class="review-form">
+        <!-- <input name="movieId" id="movie-id" type="text"> -->
+        <span class="movie-id"></span>
         <div class="slider">
           <p>Rate your experience.</p>
-          <input type="range" name="score" min="0" max="10" step="0.1" value="0" oninput="rangeValue.innerText = this.value">
+          <input type="range" id="score" name="score" min="0" max="10" step="0.1" value="0" oninput="rangeValue.innerText = this.value">
           <span id="rangeValue">0</span>
         </div>
         <textarea placeholder="What did you think of the movie?" name="review" class="movie-review"></textarea>
-        <button type="submit" class="review-btn">Submit</button>
+        <button type="button" class="review-submit-btn">Submit</button>
+        <div class="success-popup">
+          <span>Your review has been submitted.</span>
+        </div>
       </form>  
     </div>
 
@@ -45,7 +49,7 @@
       <ul class="review-list">
         <% for(var i=0; i<reviews.length; i++){ %>
           <li class="review">
-            <p><%= reviews[i].review %></p>
+            <p class="review-statement"><%= reviews[i].review %></p>
             <span class="score"><%= reviews[i].score %></span>
             <span><%= reviews[i].likes %></span>
             <span class="fa fa-thumbs-up"></span>
