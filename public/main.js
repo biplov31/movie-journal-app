@@ -47,42 +47,44 @@ async function addReview(){
   // event.preventDefault();
   const review = document.querySelector('.movie-review').value
   const score = document.querySelector('#score').value
-  try{
-    const response = await fetch('addReview', {
-      method: 'post',
-      headers: {'Content-Type' : 'application/json'},
-      body: JSON.stringify({
-        'movieId': movieId,
-        'review': review,
-        'score': score
+  if(review != ''){
+    try{
+      const response = await fetch('addReview', {
+        method: 'post',
+        headers: {'Content-Type' : 'application/json'},
+        body: JSON.stringify({
+          'movieId': movieId,
+          'review': review,
+          'score': score
+        })
       })
-    })
-    const data = await response.json()
-    
-    let popUp = document.querySelector('.success-popup')
-    popUp.classList.add('show-popup')
-    setTimeout(() => {
-      popUp.classList.remove('show-popup')
-    }, 1200)
-    document.querySelector('.review-form').reset();
-    document.querySelector('#rangeValue').innerText = 0
+      const data = await response.json()
 
-    // updating new review to the DOM without using the database
-    // const reviewList = document.querySelector('.review-list')
-    // let newReview = document.createElement('li')
-    // newReview.classList.add('review')
-    // newReview.innerHTML = 
-    //   `<p class="review-statement">${data.review}</p>`
-    //   + `<span class="score">${data.score}</span>`
-    //   + `<span>${data.likes}</span>`
-    //   + `<span class="fa fa-thumbs-up"></span>`
-    //   + `<span class="fa fa-trash"></span>`
-    // reviewList.appendChild(newReview) 
+      let popUp = document.querySelector('.success-popup')
+      popUp.classList.add('show-popup')
+      setTimeout(() => {
+        popUp.classList.remove('show-popup')
+      }, 1200)
+      document.querySelector('.review-form').reset();
+      document.querySelector('#rangeValue').innerText = 0
 
-  } catch(err) {
-      console.log(err)
-  }
-}  
+      // updating new review to the DOM without using the database
+      // const reviewList = document.querySelector('.review-list')
+      // let newReview = document.createElement('li')
+      // newReview.classList.add('review')
+      // newReview.innerHTML = 
+      //   `<p class="review-statement">${data.review}</p>`
+      //   + `<span class="score">${data.score}</span>`
+      //   + `<span>${data.likes}</span>`
+      //   + `<span class="fa fa-thumbs-up"></span>`
+      //   + `<span class="fa fa-trash"></span>`
+      // reviewList.appendChild(newReview) 
+
+    } catch(err) {
+        console.log(err)
+    }
+  }  
+}    
 
 
 // liking and deleting the reviews

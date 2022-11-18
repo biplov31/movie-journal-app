@@ -167,7 +167,7 @@ html{
   left: 50%;
   transform: translate(-50%, -50%) scale(0.1);
   visibility: hidden;
-  transition: transform 0.4s, visibility 0.4s;
+  transition: transform 0.4s;  /* applying transition on visibility shows the popup on page load as hiding it takes some time */
 }
 .show-popup{
   visibility: visible;
@@ -186,7 +186,7 @@ html{
   justify-content: center;
   flex-direction: column;
   width: 70%;
-  max-height: 500px;
+  max-height: 350px;
   overflow-y: scroll;
   /* position: relative; */
 }
