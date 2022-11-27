@@ -53,18 +53,37 @@ html{
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+.fa-bookmark{
+  font-size: 30px;
+  /* display: none; */
+  position: absolute;
+  top: 8%;
+  left: 5%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  cursor: pointer;
+}
+.fa-bookmark:hover{
+  opacity: 1;
+}
+.bookmarked{
+  color: #d4aa11;
 }
 .movie-poster{
-  height: 50vh;
+  height: 30%;
   width: 40vw;
   overflow: hidden;
   background-position: center;
 }
 .poster{
   margin: auto;
-  width: 100%;
-  object-fit: cover;
+  height: 300px;
+  width: 90%;
+  /* object-fit: cover; */
   background-position: center;
+  background-size: cover;
 }
 .genre{
   color: #d4aa11;
@@ -173,9 +192,21 @@ html{
   visibility: visible;
   transform: translate(-50%, -50%) scale(1);
 }
+.load-reviews{
+  padding: 10px;
+  text-decoration: none;
+  background-color: #d4aa11;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.review-collection{
+  margin-top: 40px;
+}
 .review-collection>span{
   font-size: 1.5rem;
   font-weight: 600;
+  display: block;
+  /* margin-bottom: 30px; */
 }
 .review-list{
   padding-top: 10px;
@@ -185,8 +216,8 @@ html{
   align-items: stretch;
   justify-content: center;
   flex-direction: column;
-  width: 70%;
-  max-height: 350px;
+  width: 60%;
+  /* max-height: 350px; */
   overflow-y: scroll;
   /* position: relative; */
 }
@@ -209,4 +240,14 @@ html{
   color: #444242;
   margin: 6px;
   padding: 1.5px;
+}
+.fa{
+  margin: 0 2px;
+  cursor: pointer;
+}
+.fa-thumbs-up{
+  color: rgb(72, 119, 250);
+}
+.fa-trash{
+  color: rgb(166, 52, 52);
 }

@@ -2,7 +2,6 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');  // npm install body-parser --save
-const { request, response } = require('express');
 const MongoClient = require('mongodb').MongoClient // npm install mongodb --save
 const PORT = 3000
 require('dotenv').config()
@@ -21,36 +20,46 @@ MongoClient.connect(connectionString, {useUnifiedTopology: true})
     app.use(bodyParser.json())
     app.use(express.static('public'))
 
-    app.get('/', async (req, res) => {
-      reviewCollection.find().sort({likes: -1}).toArray()
-        .then(data => {
-          res.render('index.ejs', {reviews: data})          
-        })
-        .catch(error => {console.error(error)})
+    // app.get('/', async (req, res) => {
+    //   console.log(req.movieId)
+    //   reviewCollection.find().sort({likes: -1}).toArray()
+    //     .then(data => {
+    //       res.render('index.ejs', {reviews: data})          
+    //     })
+    //     .catch(error => {console.error(error)})
+    // })
+
+
+    app.get(['/', '/getReviews'], (req, res) => {
+      // reviewCollection.find().toArray()
+      //   .then(data => {
+      //     res.render('index.ejs', {reviews: data})
+      //   })
+      res.render('index')
     })
 
-    // app.get(['/', '/:movieId'], (req, res) => {
-    //   const movie_id = req.params.movieId
-    //   // console.log(movie_id)
-    //   reviewCollection.find({movieId: movie_id}).toArray()
-    //     .then(data => {
-    //       res.render('index.ejs', {reviews: data})
-    //     })
-    // })
-
     // app.get('/getReview/:movieId', (req, res) => {
-    //   const movie_id = req.params.movieId
-    //   reviewCollection.find({movieId: movie_id}).toArray()
+    //   reviewCollection.find({movieId: req.params.movieId}).toArray()
     //     .then(data => {
     //       res.render('index.ejs', {reviews: data})
     //     })
     // })
-
+    
+    app.post('/getReview', async (req, res) => {
+      console.log(JSON.stringify(req.body.movieId))
+      try {
+        reviewCollection.find({movieId: req.body.movieId}).toArray()
+          .then(data => {
+            console.log(data)
+            // res.render('index', {reviews: data})
+            res.json(data)
+          })
+        } catch(err) {res.json({message: err.message})}    
+    })
+ 
     app.post('/addReview', (req, res) => {
-      console.log(req.body)
-      reviewCollection.insertOne({movieId: req.body.movieId, review: req.body.review, score: req.body.score, likes: 0})
+      reviewCollection.insertOne({movieId: req.body.movieId, review: req.body.review, score: req.body.score, genre: req.body.genre, likes: 0})
         .then(result => {
-          // console.log(result)
           res.send({review: req.body.review, score: req.body.score, likes: 0})
         }) 
         .catch(error => console.error(error))

@@ -1,7 +1,7 @@
 document.querySelector('.search-btn').addEventListener('click', getMovie)
 const moviePlot = document.querySelector('.plot')
-// let movieId = document.querySelector('.movie-id').innerText
 let movieId = document.querySelector('.movie-id').value
+let movieGenre = document.querySelector('.genre').innerText
 
 async function getMovie(){
   const enteredMovie = document.querySelector('.movie-search').value
@@ -9,7 +9,6 @@ async function getMovie(){
 
   // fetching movie from the API
   const url = `https://www.omdbapi.com/?t=${finalName}&apikey=75dd0b86`
-
   fetch(url)
     .then(res => res.json())
     .then(data => {
@@ -17,25 +16,70 @@ async function getMovie(){
       movieId = data.imdbID
       document.querySelector('.poster').src = data.Poster
       document.querySelector('.title').innerText = data.Title
-      document.querySelector('.genre').innerText = data.Genre
+      movieGenre = data.Genre
       document.querySelector('.actors').innerText = 'Starring: ' + data.Actors
       moviePlot.classList.remove('hide-content')
       moviePlot.innerText = data.Plot
-      console.log(movieId)
 
+      // document.querySelector('.load-reviews').href = `/getReviews/${movieId}`
+      // try{
+      //   console.log(movieId)
+      //   const response = fetch(`getReviews`, {   
+      //     headers: JSON.stringify({
+      //       'movieId': movieId
+      //     })
+      //   }) 
+      // } catch(err) {
+      //   console.log(err)
+      // }
+    })
+    // sending the Imdb Id of a movie to our server so we can display the reviews made for that particular movie after grabbing it from the database. We cannot use the GET method here because it doesn't have a body (we could use query parameter though), but POST method has a body through which we can send data to the server
+    .then(async function() {
+      console.log(movieId)
       try{
-        console.log(movieId)
-        const response = fetch(`getReview/${movieId}`, {   
-          method: 'get', 
-          header: {'Content-Type': 'application/json'},
-        }) 
-      } catch(err) {
-        console.log(err)
+        const response = await fetch('getReview', {
+          method: 'post',
+          headers: {'Content-Type' : 'application/json'},
+          body: JSON.stringify({
+            'movieId': movieId
+          })
+        })
+        const reviewsMade = await response.json()
+        console.log(reviewsMade)
+
+      // updating new review to the DOM without using the database or reloading the page
+      const reviewList = document.querySelector('.review-list')
+      reviewList.innerHTML = '' // so the reviews from earlier searches don't stay in the DOM
+
+      if(reviewsMade.length == 0){
+        reviewList.innerText = "There are no reviews for this movie yet."
+        return
       }
+      reviewsMade.forEach((item) => {
+        let newReview = document.createElement('li')
+        newReview.classList.add('review')
+        newReview.innerHTML = 
+          `<p class="review-statement">${item.review}</p>`
+          + `<span class="score">${item.score}</span>`
+          + `<span>${item.likes}</span>`
+          // + `<span class="fa fa-thumbs-up"></span>`
+          // + `<span class="fa fa-trash"></span>`
+
+          let likeBtn = document.createElement('span')
+          likeBtn.classList.add('fa', 'fa-thumbs-up')
+          likeBtn.addEventListener('click', likeReview)
+          let deleteBtn = document.createElement('span')
+          deleteBtn.classList.add('fa', 'fa-trash')
+          deleteBtn.addEventListener('click', deleteReview)
+          newReview.append(likeBtn, deleteBtn)
+
+        reviewList.appendChild(newReview) 
+      })
+      } catch(err) {
+         console.log(err)}
     })
     .catch(error => console.error(error)) 
 
-  // sending movie ID to our GET method so we can use it to find and display relevant reviews - Doesn't work because GET request does not have a body, only the url and the header. With Node we can use the url to pass data to the server: query parameter and query string
 }
 
 
@@ -44,7 +88,6 @@ const reviewBtn = document.querySelector('.review-submit-btn');
 // submiting data normally from HTML form would reload the page and our API data would disappear. with fetch we are able to submit data without refreshing the page
 reviewBtn.addEventListener('click', addReview)
 async function addReview(){
-  // event.preventDefault();
   const review = document.querySelector('.movie-review').value
   const score = document.querySelector('#score').value
   if(review != ''){
@@ -55,10 +98,12 @@ async function addReview(){
         body: JSON.stringify({
           'movieId': movieId,
           'review': review,
-          'score': score
+          'score': score,
+          'genre': movieGenre
         })
       })
-      const data = await response.json()
+      const reviewsMade = await response.json()
+      console.log(reviewsMade)
 
       let popUp = document.querySelector('.success-popup')
       popUp.classList.add('show-popup')
@@ -68,18 +113,6 @@ async function addReview(){
       document.querySelector('.review-form').reset();
       document.querySelector('#rangeValue').innerText = 0
 
-      // updating new review to the DOM without using the database
-      // const reviewList = document.querySelector('.review-list')
-      // let newReview = document.createElement('li')
-      // newReview.classList.add('review')
-      // newReview.innerHTML = 
-      //   `<p class="review-statement">${data.review}</p>`
-      //   + `<span class="score">${data.score}</span>`
-      //   + `<span>${data.likes}</span>`
-      //   + `<span class="fa fa-thumbs-up"></span>`
-      //   + `<span class="fa fa-trash"></span>`
-      // reviewList.appendChild(newReview) 
-
     } catch(err) {
         console.log(err)
     }
@@ -88,15 +121,17 @@ async function addReview(){
 
 
 // liking and deleting the reviews
-const deleteButton = document.querySelectorAll('.fa-trash')
-const likeButton = document.querySelectorAll('.fa-thumbs-up')
 
-Array.from(deleteButton).forEach((element) => {
-  element.addEventListener('click', deleteReview)
-})
-Array.from(likeButton).forEach((element) => {
-  element.addEventListener('click', likeReview)
-})
+// this doesn't work now since we're appending buttons from javascript and not grabbing them from the HTML
+// const deleteButton = document.querySelectorAll('.fa-trash')
+// const likeButton = document.querySelectorAll('.fa-thumbs-up')
+
+// Array.from(deleteButton).forEach((element) => {
+//   element.addEventListener('click', deleteReview)
+// })
+// Array.from(likeButton).forEach((element) => {
+//   element.addEventListener('click', likeReview)
+// })
 
 async function deleteReview(){
   const reviewContainer = this.parentNode.childNodes[1]
@@ -122,7 +157,7 @@ async function deleteReview(){
     })
     const data = await response.json()
     console.log(data)
-    reviewContainer.parentElement.closest('.review').remove()  // remove deleted item from the DOM without reloading the page
+    reviewContainer.parentElement.remove()  // remove deleted item from the DOM without reloading the page
     // location.reload(true)    
   } catch(err) {
     console.log(err)
@@ -130,8 +165,10 @@ async function deleteReview(){
 }
 
 async function likeReview(){
-  const reviewStatement = this.parentNode.childNodes[1].innerText
-  let likesContainer = (this.parentNode.childNodes[5])
+  // const reviewStatement = this.parentNode.childNodes[1].innerText
+  const reviewStatement = this.parentElement.children[0].innerText
+  console.log(reviewStatement)
+  let likesContainer = (this.parentElement.children[2])
   let totalLikes = Number(likesContainer.innerText)
   try{
     const response = await fetch('addOneLike', {

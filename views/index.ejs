@@ -20,6 +20,7 @@
     </div>  
 
     <div class="movie-info">
+      <i class="fas fa-bookmark"></i>
       <div class="movie-poster"><img src="/netflix-poster.jpg" alt="" class="poster"></div>
       <h2 class="title"></h2>
       <h5 class="genre"></h5>
@@ -44,19 +45,22 @@
       </form>  
     </div>
 
+    <!-- <a href="" class="load-reviews">Load Reviews</a> -->
     <div class="review-collection">
       <span>User Reviews</span>
       <ul class="review-list">
-        <% for(var i=0; i<reviews.length; i++){ %>
-          <li class="review">
-            <p class="review-statement"><%= reviews[i].review %></p>
-            <span class="score"><%= reviews[i].score %></span>
-            <span><%= reviews[i].likes %></span>
-            <span class="fa fa-thumbs-up"></span>
-            <span class="fa fa-trash"></span>
-          </li>
-        <% } %>  
-
+        <% if (typeof reviews !== 'undefined') { %>
+          <% for(var i=0; i<reviews.length; i++){ %>
+            <li class="review">
+              <p class="review-statement"><%= reviews[i].review %></p>
+              <span class="score"><%= reviews[i].score %></span>
+              <span><%= reviews[i].likes %></span>
+              <span class="fa fa-thumbs-up"></span>
+              <span class="fa fa-trash"></span>
+            </li>
+          <% } %>  
+        <% } %>       
+    
       </ul>
     </div>
   </div> 
