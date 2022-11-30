@@ -1,8 +1,8 @@
 document.querySelector('.search-btn').addEventListener('click', getMovie)
 const moviePlot = document.querySelector('.plot')
 let movieId = document.querySelector('.movie-id').value
-let movieGenre = document.querySelector('.genre').innerText
-
+let movieGenre = document.querySelector('.genre')
+let movieTitle = document.querySelector('.title')
 async function getMovie(){
   const enteredMovie = document.querySelector('.movie-search').value
   const finalName = enteredMovie.split(' ').join('+') 
@@ -15,29 +15,17 @@ async function getMovie(){
       console.log(data)
       movieId = data.imdbID
       document.querySelector('.poster').src = data.Poster
-      document.querySelector('.title').innerText = data.Title
-      movieGenre = data.Genre
+      movieTitle.innerText = data.Title
+      movieGenre.innerText = data.Genre
       document.querySelector('.actors').innerText = 'Starring: ' + data.Actors
       moviePlot.classList.remove('hide-content')
       moviePlot.innerText = data.Plot
-
-      // document.querySelector('.load-reviews').href = `/getReviews/${movieId}`
-      // try{
-      //   console.log(movieId)
-      //   const response = fetch(`getReviews`, {   
-      //     headers: JSON.stringify({
-      //       'movieId': movieId
-      //     })
-      //   }) 
-      // } catch(err) {
-      //   console.log(err)
-      // }
     })
     // sending the Imdb Id of a movie to our server so we can display the reviews made for that particular movie after grabbing it from the database. We cannot use the GET method here because it doesn't have a body (we could use query parameter though), but POST method has a body through which we can send data to the server
     .then(async function() {
       console.log(movieId)
       try{
-        const response = await fetch('getReview', {
+        const response = await fetch('reviews/getReview', {
           method: 'post',
           headers: {'Content-Type' : 'application/json'},
           body: JSON.stringify({
@@ -59,7 +47,8 @@ async function getMovie(){
         let newReview = document.createElement('li')
         newReview.classList.add('review')
         newReview.innerHTML = 
-          `<p class="review-statement">${item.review}</p>`
+           `<span class="data-id hidden">${item._id}</span>`
+          + `<p class="review-statement">${item.review}</p>`
           + `<span class="score">${item.score}</span>`
           + `<span>${item.likes}</span>`
           // + `<span class="fa fa-thumbs-up"></span>`
@@ -83,6 +72,16 @@ async function getMovie(){
 }
 
 
+// bookmarking a movie
+let bookmarkStatus = false
+let bookmarkBtn = document.querySelector('.fa-bookmark')
+bookmarkBtn.addEventListener('click', () => {
+  bookmarkBtn.classList.toggle('bookmarked')
+  if(bookmarkBtn.classList.contains('bookmarked')){
+    bookmarkStatus = true;
+  }  
+})
+
 // adding movie review
 const reviewBtn = document.querySelector('.review-submit-btn');
 // submiting data normally from HTML form would reload the page and our API data would disappear. with fetch we are able to submit data without refreshing the page
@@ -92,14 +91,16 @@ async function addReview(){
   const score = document.querySelector('#score').value
   if(review != ''){
     try{
-      const response = await fetch('addReview', {
+      const response = await fetch('reviews/addReview', {
         method: 'post',
         headers: {'Content-Type' : 'application/json'},
         body: JSON.stringify({
           'movieId': movieId,
           'review': review,
           'score': score,
-          'genre': movieGenre
+          'genre': movieGenre.innerText, 
+          'title': movieTitle.innerText,
+          'bookmarked': bookmarkStatus
         })
       })
       const reviewsMade = await response.json()
@@ -117,7 +118,8 @@ async function addReview(){
         console.log(err)
     }
   }  
-}    
+}  
+
 
 
 // liking and deleting the reviews
@@ -134,48 +136,35 @@ async function addReview(){
 // })
 
 async function deleteReview(){
-  const reviewContainer = this.parentNode.childNodes[1]
-  const reviewStatement = this.parentNode.childNodes[1].innerText
-  // fetch('deleteReview', {   
-  //   method: 'delete', 
-  //   header: {'Content-Type': 'application/json'},
-  //   body: JSON.stringify({
-  //     'reviewToDel': reviewStatement
-  //   })
-  // })
-  // .then(res => {
-  //   if(res.ok) return res.json()
-  //   location.reload()
-  // })
+  // const reviewContainer = this.parentNode.children[0]
+  const reviewId = this.parentNode.childNodes[0]
   try{
-    const response = await fetch('deleteReview', {  // we don't need to enter the full url in our fetch because we're in our local server; localhost:3000 + /deleteReview
+    const response = await fetch('reviews/deleteReview', {  // we don't need to enter the full url in our fetch because we're in our local server; localhost:3000 + /deleteReview
       method: 'delete', 
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        'reviewToDel': reviewStatement
+        'reviewToDel': reviewId.innerText
       })
     })
     const data = await response.json()
     console.log(data)
-    reviewContainer.parentElement.remove()  // remove deleted item from the DOM without reloading the page
-    // location.reload(true)    
+    reviewId.parentElement.remove()  // remove deleted item from the DOM without reloading the page  
   } catch(err) {
     console.log(err)
   }
 }
 
 async function likeReview(){
-  // const reviewStatement = this.parentNode.childNodes[1].innerText
-  const reviewStatement = this.parentElement.children[0].innerText
-  console.log(reviewStatement)
-  let likesContainer = (this.parentElement.children[2])
+  const reviewId = this.parentElement.children[0].innerText
+  console.log(reviewId)
+  let likesContainer = (this.parentElement.children[3])
   let totalLikes = Number(likesContainer.innerText)
   try{
-    const response = await fetch('addOneLike', {
+    const response = await fetch('reviews/likeReview', {
       method: 'put', 
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        'reviewToLike': reviewStatement,
+        'reviewToLike': reviewId,
         'likeCount': totalLikes
       })
     })
@@ -183,27 +172,8 @@ async function likeReview(){
     console.log(data)
     console.log(`The likes has been updated to ${data.updatedLikes}`)
     likesContainer.innerHTML = `<span>${data.updatedLikes}</span>`  // updating a part of the DOM without requiring a full page refresh
-    // location.reload(true) 
   } catch(err) {
     console.log(err)
   }
 }
 
-// const reviewStatement = this.parentNode.childNodes[1].innerText
-// const totalLikes = Number(this.parentNode.childNodes[5].innerText)
-//   // console.log(reviewStatement, totalLikes)
-// function likeReview(){
-//   totalLikes++
-//   fetch("addOneLike", {
-//     method: 'put', 
-//     headers: {'Content-Type': 'application/json'},
-//     body: JSON.stringify({
-//       'reviewToLike': reviewStatement,
-//       'likeCount': totalLikes
-//     })
-//   })
-//   .then(response => response.json())
-//   .then(json => {
-//     totalLikes = json.likeCount
-//   })
-// }

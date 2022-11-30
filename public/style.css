@@ -70,6 +70,7 @@ html{
 }
 .bookmarked{
   color: #d4aa11;
+  opacity: 1;
 }
 .movie-poster{
   height: 30%;
@@ -209,7 +210,6 @@ html{
   /* margin-bottom: 30px; */
 }
 .review-list{
-  padding-top: 10px;
   margin: 1rem auto 5rem auto;
   outline: 1px solid #171717;
   display: flex;
@@ -228,6 +228,9 @@ html{
   width: 100%;
   color: #f8f8f8;
   transition: background-color 200ms ease;
+}
+.hidden{
+  display: none;
 }
 .review p{
   display: inline;
