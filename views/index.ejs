@@ -11,6 +11,11 @@
 <body>
   <div class="container">
     <h1 class="site-name">Movie<span>Night</span></h1>
+    <nav>
+      <span><a href="#">Login</a></span>
+      <span><a href="/watchList">Watch List</a></span>
+      <span><a href="/myCollection" target="_blank">My Collection</a></span>
+    </nav>
     <div class="form-section">
       <form action="" method="">
         <p>What did you watch today?</p>
@@ -50,7 +55,7 @@
       <span>User Reviews</span>
       <ul class="review-list">
         <% if (typeof reviews !== 'undefined') { %>
-          <% for(var i=0; i<reviews.length; i++){ %>
+          <% for(let i=0; i<reviews.length; i++){ %>
             <li class="review">
               <p class="review-statement"><%= reviews[i].review %></p>
               <span class="score"><%= reviews[i].score %></span>

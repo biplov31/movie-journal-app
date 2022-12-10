@@ -10,7 +10,8 @@ module.exports = {
   }, 
 
   addReview: async (req, res) => {
-    Review.create({movieId: req.body.movieId, review: req.body.review, score: req.body.score, genre: req.body.genre, likes: 0, bookmarked: req.body.bookmarked})
+    console.log(req.body)
+    Review.create({movieTitle: req.body.title, movieId: req.body.movieId, review: req.body.review, score: req.body.score, genre: req.body.genre, likes: 0, bookmarked: req.body.bookmarked})
       .then(result => {
         res.send({review: req.body.review, score: req.body.score, likes: 0, _id: req.body._id})  // after adding a review to the database, we want to send respective database Id to the frontend so we can like/delete reviews based on the id
       }) 
@@ -33,7 +34,7 @@ module.exports = {
   deleteReview: async (req, res) => {
     Review.deleteOne({_id: req.body.reviewToDel})  // on our database we're looking for an object that has a review property of what came through the request
     .then(data => {
-      res.json("Delete succesful.")
+      res.json("Delete successful.")
     })
     .catch(error => console.error(error))
   }

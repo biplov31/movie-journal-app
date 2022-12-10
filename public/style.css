@@ -5,13 +5,19 @@
   text-align: center;
 }
 html{
-  background-color:#4d4847;
   font-size: 100%;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   color: gainsboro;
+  padding-bottom: 40px;
+  height: 100%;
+}
+body{
+  height: 100%;
 }
 .container{
-  min-height: 100vh;
+  padding-bottom: 30px;
+  background-color:#4d4847;
+  /* min-height: 100vh; */
   max-width: 100vw;
 }
 .site-name{
@@ -20,13 +26,25 @@ html{
   /* float: left; */
   position: absolute;
   left: 1.5rem;
-  top: 1.5rem;
+  top: 1rem;
 }
 .site-name span{
   color:#919093;
 }
+nav{
+  width: 25%;
+  position: absolute;
+  right: 1.5rem;
+  top: 1.3rem;
+  display: flex;
+  justify-content: space-between;
+}
+nav a{
+  text-decoration: none;
+  color: gainsboro;
+}
 .form-section{
-  margin-top: 3rem;
+  margin-top: 4rem;
   display: inline-block;
   width: 50vw;
 }
@@ -86,14 +104,20 @@ html{
   background-position: center;
   background-size: cover;
 }
+.title{
+  letter-spacing: 0.5px;
+}
 .genre{
   color: #d4aa11;
+}
+.actors{
+  opacity: 0.7;
 }
 .hide-content{
   display: none;
 }
 .plot{
-  /* margin-top: 10px; */
+  margin-top: 10px;
   width: 70%;
   text-align: justify;
   position: relative;
@@ -201,7 +225,8 @@ html{
   border-radius: 10px;
 }
 .review-collection{
-  margin-top: 40px;
+  margin: 30px;
+  margin-bottom: 50px;
 }
 .review-collection>span{
   font-size: 1.5rem;
@@ -253,4 +278,108 @@ html{
 }
 .fa-trash{
   color: rgb(166, 52, 52);
+}
+
+
+
+/* My Collection */
+.collection-container{
+  width: 90%;
+  margin: 0 auto;
+}
+.parallax{
+  position: relative;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.parallax.header-content{
+  background-image: url(film2.jpg);
+  border: 1px solid black;
+  min-height: 180px;
+  opacity: 0.8;
+}
+.par-text{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
+  color: #000;
+  font-size: 30px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+.par-text span{
+  color: #fff;
+  background-color: #111;
+  padding: 10px;
+}
+.main{
+  position: relative;
+  height: 100%;
+}
+.parallax.main-content{
+  background-image: url(film1.jpg);
+  height: 100vh;
+  /* position: fixed; */
+  z-index: -100;
+  opacity: 0.4;
+}
+
+/* .parallax:nth-child(2){
+  background-image: url(./img/film2.jpg);
+  min-height: 400px;
+}
+.parallax:nth-child(3){
+  background-image: url(./img/film1.jpg);
+  min-height: 400px;
+} */
+.movie-list{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 20px;
+}
+.listed-movie{
+  display: flex;
+  gap: 0.8rem;
+  padding: 15px;
+  background-color: rgba(85, 85, 82, 0.94);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  width: 55%;
+  margin: 20px auto;
+}
+.listed-movie img{
+  height: 150px;
+  object-fit: cover;
+  border-radius: 15px;
+  width: 40%;
+}
+.listed-movie-content{
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  color: aliceblue;
+}
+.listed-movie-content .genre{
+  color: #171717;
+  width: fit-content;
+  margin: 0 auto;
+  padding: 0 2px;
+  background-color: rgba(212, 170, 17, 0.7);
+  line-height: 0.9;
+}
+.listed-movie-content p{
+  text-align: left;
+}
+.parallax.footer-content{
+  background-image: url(film2.jpg);
+  height: 140px;
+  background-position: top;
 }

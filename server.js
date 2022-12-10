@@ -4,6 +4,7 @@ const app = express();
 const connectDB = require('./config/database')
 const homeRoutes = require('./routes/home')
 const reviewRoutes = require('./routes/reviews')
+const collectionRoutes = require('./routes/myCollection');
 
 require('dotenv').config({path: './config/.env'})  // node by default does not recognize it so we have to explicitly define the path
 connectDB()
@@ -16,7 +17,7 @@ app.use(express.static('public'))
 
 app.use('/', homeRoutes)
 app.use('/reviews', reviewRoutes)
-    
+app.use('/myCollection', collectionRoutes)
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running!`)
