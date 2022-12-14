@@ -351,14 +351,14 @@ nav a{
   padding: 15px;
   background-color: rgba(85, 85, 82, 0.94);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  border-radius: 10px;
+  /* border-radius: 10px; */
   width: 55%;
   margin: 20px auto;
 }
 .listed-movie img{
   height: 150px;
   object-fit: cover;
-  border-radius: 15px;
+  /* border-radius: 15px; */
   width: 40%;
 }
 .listed-movie-content{
@@ -376,6 +376,7 @@ nav a{
   line-height: 0.9;
 }
 .listed-movie-content p{
+  margin-top: 0.6rem;
   text-align: left;
 }
 .parallax.footer-content{

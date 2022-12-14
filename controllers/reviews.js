@@ -11,7 +11,7 @@ module.exports = {
 
   addReview: async (req, res) => {
     console.log(req.body)
-    Review.create({movieTitle: req.body.title, movieId: req.body.movieId, review: req.body.review, score: req.body.score, genre: req.body.genre, likes: 0, bookmarked: req.body.bookmarked})
+    Review.create({movieTitle: req.body.title, movieId: req.body.movieId, review: req.body.review, score: req.body.score, genre: req.body.genre, likes: 0})
       .then(result => {
         res.send({review: req.body.review, score: req.body.score, likes: 0, _id: req.body._id})  // after adding a review to the database, we want to send respective database Id to the frontend so we can like/delete reviews based on the id
       }) 

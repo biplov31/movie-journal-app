@@ -19,6 +19,9 @@ const ReviewSchema = new mongoose.Schema({
   movieTitle: {
     type: String
   },
+  plot: {
+    type: String
+  },
   bookmarked: {
     type: Boolean
   } 

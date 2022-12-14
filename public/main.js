@@ -1,8 +1,10 @@
 document.querySelector('.search-btn').addEventListener('click', getMovie)
-const moviePlot = document.querySelector('.plot')
+let moviePlot = document.querySelector('.plot')
 let movieId = document.querySelector('.movie-id').value
 let movieGenre = document.querySelector('.genre')
 let movieTitle = document.querySelector('.title')
+let bookmarkStatus = false;
+
 async function getMovie(){
   const enteredMovie = document.querySelector('.movie-search').value
   const finalName = enteredMovie.split(' ').join('+') 
@@ -23,7 +25,6 @@ async function getMovie(){
     })
     // sending the Imdb Id of a movie to our server so we can display the reviews made for that particular movie after grabbing it from the database. We cannot use the GET method here because it doesn't have a body (we could use query parameter though), but POST method has a body through which we can send data to the server
     .then(async function() {
-      console.log(movieId)
       try{
         const response = await fetch('reviews/getReview', {
           method: 'post',
@@ -35,35 +36,41 @@ async function getMovie(){
         const reviewsMade = await response.json()
         console.log(reviewsMade)
 
-      // updating new review to the DOM without using the database or reloading the page
-      const reviewList = document.querySelector('.review-list')
-      reviewList.innerHTML = '' // so the reviews from earlier searches don't stay in the DOM
+        if(reviewsMade.some(ele => ele.bookmarked == true)){  // if the movie has already been bookmarked before the bookmark button should be active
+          bookmarkBtn.classList.add('bookmarked')
+          bookmarkStatus = true
+        }
 
-      if(reviewsMade.length == 0){
-        reviewList.innerText = "There are no reviews for this movie yet."
-        return
-      }
-      reviewsMade.forEach((item) => {
-        let newReview = document.createElement('li')
-        newReview.classList.add('review')
-        newReview.innerHTML = 
-           `<span class="data-id hidden">${item._id}</span>`
-          + `<p class="review-statement">${item.review}</p>`
-          + `<span class="score">${item.score}</span>`
-          + `<span>${item.likes}</span>`
-          // + `<span class="fa fa-thumbs-up"></span>`
-          // + `<span class="fa fa-trash"></span>`
+        // updating new review to the DOM without using the database or reloading the page
+        const reviewList = document.querySelector('.review-list')
+        reviewList.innerHTML = '' // so the reviews from earlier searches don't stay in the DOM
+        if(!reviewsMade.some(ele => ele.review !== undefined)){  // if none of the objects inside of the array reviewsMade have any review property, it means the movie has not been reviewed yet
+          reviewList.innerText = "There are no reviews for this movie yet."
+          return
+        }
+        reviewsMade.forEach((item) => {
+          if(item.review !== undefined){
+            let newReview = document.createElement('li')
+            newReview.classList.add('review')
+            newReview.innerHTML = 
+              `<span class="data-id hidden">${item._id}</span>`
+              + `<p class="review-statement">${item.review}</p>`
+              + `<span class="score">${item.score}</span>`
+              + `<span>${item.likes}</span>`
+              // + `<span class="fa fa-thumbs-up"></span>`
+              // + `<span class="fa fa-trash"></span>`
 
-          let likeBtn = document.createElement('span')
-          likeBtn.classList.add('fa', 'fa-thumbs-up')
-          likeBtn.addEventListener('click', likeReview)
-          let deleteBtn = document.createElement('span')
-          deleteBtn.classList.add('fa', 'fa-trash')
-          deleteBtn.addEventListener('click', deleteReview)
-          newReview.append(likeBtn, deleteBtn)
+              let likeBtn = document.createElement('span')
+              likeBtn.classList.add('fa', 'fa-thumbs-up')
+              likeBtn.addEventListener('click', likeReview)
+              let deleteBtn = document.createElement('span')
+              deleteBtn.classList.add('fa', 'fa-trash')
+              deleteBtn.addEventListener('click', deleteReview)
+              newReview.append(likeBtn, deleteBtn)
 
-        reviewList.appendChild(newReview) 
-      })
+            reviewList.appendChild(newReview) 
+          }  
+        })
       } catch(err) {
          console.log(err)}
     })
@@ -73,13 +80,35 @@ async function getMovie(){
 
 
 // bookmarking a movie
-let bookmarkStatus = false
 let bookmarkBtn = document.querySelector('.fa-bookmark')
-bookmarkBtn.addEventListener('click', () => {
+bookmarkBtn.addEventListener('click', async () => {
   bookmarkBtn.classList.toggle('bookmarked')
   if(bookmarkBtn.classList.contains('bookmarked')){
     bookmarkStatus = true;
-  }  
+    const response = await fetch('watchList/addBookmark', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        'movieId': movieId,
+        'movieTitle': movieTitle.innerText, 
+        'movieGenre': movieGenre.innerText,
+        'moviePlot': moviePlot.innerText,
+        'bookmarked': bookmarkStatus
+      })
+    })
+    const bookmarkedMovie = await response.json()
+    console.log(bookmarkedMovie)
+  } else {
+    const response = await fetch('watchList/removeBookmark', {
+      method: 'delete',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        'movieToDel': movieId
+      })
+    })  
+    const unbookmarkedMovie = await response.json()
+    console.log(unbookmarkedMovie)
+  }
 })
 
 // adding movie review
@@ -100,7 +129,6 @@ async function addReview(){
           'score': score,
           'genre': movieGenre.innerText, 
           'title': movieTitle.innerText,
-          'bookmarked': bookmarkStatus
         })
       })
       const reviewsMade = await response.json()
