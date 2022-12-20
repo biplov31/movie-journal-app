@@ -5,7 +5,7 @@ module.exports = {
     try{
       let moviesInCollection = []
       // since multiple reviews could be made for a single movie in the shared database, we need to eliminate duplication by finding movies of unique Imdb Ids
-      let movies = await Review.find().distinct("movieId")
+      let movies = await Review.find({'review': {'$exists': true}}).distinct("movieId")
       // movies.forEach is a synchronous action, but Review.findOne is asynchronous - hence the .then() call.  The .then() gets executed when the query finishes, but we aren't waiting for it here - we're moving on to log moviesInCollection immediately afterward, hence it is an empty array
       // movies.forEach((movie) => {
       //   Review.findOne({'movieId' : movie})
