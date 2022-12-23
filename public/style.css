@@ -343,7 +343,10 @@ nav a{
   display: flex;
   flex-direction: column;
   position: absolute;
+  width: 50%;
   top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 .listed-movie{
   display: flex;
@@ -352,7 +355,7 @@ nav a{
   background-color: rgba(85, 85, 82, 0.94);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   /* border-radius: 10px; */
-  width: 55%;
+  width: 100%;
   margin: 20px auto;
 }
 .listed-movie img{

@@ -10,7 +10,7 @@
 <body>
   <div class="collection-container">
     <div class="parallax header-content">
-      <div class="par-text"><span>Movie Collection</span></div>
+      <div class="par-text"><span>My Watchlist</span></div>
     </div>
 
     <div class="main">
@@ -19,7 +19,7 @@
       <div class="watch-list movie-list">
         <% for(let i=0; i<movies.length; i++){ %>
           <div class="watchlisted-movie listed-movie">
-            <img src="/netflix-poster.jpg" alt="">
+            <img class="poster" src="<%= movies[i].posterLink%>" alt="">
             <div class="listed-movie-content">
               <h3 class="title"><%= movies[i].movieTitle %></h3>
               <span class="genre"><%= movies[i].genre %></span>
@@ -27,10 +27,8 @@
             </div>  
           </div>
         <% } %>
-      </div> 
-
+      </div>
     </div>
-
 
   </div>  
 </body>

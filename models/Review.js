@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 
 const ReviewSchema = new mongoose.Schema({
+  movieId: {
+    type: String
+  },
   review: {
     type: String
   }, 
@@ -9,18 +12,6 @@ const ReviewSchema = new mongoose.Schema({
   },
   score: {
     type: Number
-  },
-  genre: {
-    type: String
-  },
-  movieId: {
-    type: String
-  }, 
-  movieTitle: {
-    type: String
-  },
-  plot: {
-    type: String
   },
   bookmarked: {
     type: Boolean

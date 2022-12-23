@@ -3,6 +3,7 @@ let moviePlot = document.querySelector('.plot')
 let movieId = document.querySelector('.movie-id').value
 let movieGenre = document.querySelector('.genre')
 let movieTitle = document.querySelector('.title')
+let moviePoster = document.querySelector('.poster')
 let bookmarkStatus = false;
 
 async function getMovie(){
@@ -16,7 +17,7 @@ async function getMovie(){
     .then(data => {
       console.log(data)
       movieId = data.imdbID
-      document.querySelector('.poster').src = data.Poster
+      moviePoster.src = data.Poster
       movieTitle.innerText = data.Title
       movieGenre.innerText = data.Genre
       document.querySelector('.actors').innerText = 'Starring: ' + data.Actors
@@ -34,13 +35,6 @@ async function getMovie(){
           })
         })
         const reviewsMade = await response.json()
-        console.log(reviewsMade)
-
-        if(reviewsMade.some(ele => ele.bookmarked == true)){  // if the movie has already been bookmarked before the bookmark button should be active
-          bookmarkBtn.classList.add('bookmarked')
-          bookmarkStatus = true
-        }
-
         // updating new review to the DOM without using the database or reloading the page
         const reviewList = document.querySelector('.review-list')
         reviewList.innerHTML = '' // so the reviews from earlier searches don't stay in the DOM
@@ -57,8 +51,6 @@ async function getMovie(){
               + `<p class="review-statement">${item.review}</p>`
               + `<span class="score">${item.score}</span>`
               + `<span>${item.likes}</span>`
-              // + `<span class="fa fa-thumbs-up"></span>`
-              // + `<span class="fa fa-trash"></span>`
 
               let likeBtn = document.createElement('span')
               likeBtn.classList.add('fa', 'fa-thumbs-up')
@@ -71,8 +63,25 @@ async function getMovie(){
             reviewList.appendChild(newReview) 
           }  
         })
-      } catch(err) {
-         console.log(err)}
+      } catch(err) {console.log(err)}
+    })
+    // if the movie has already been bookmarked before the bookmark button should be active
+    .then(async function() {
+      try{
+        const response = await fetch('watchList/getBookmarkedMovie', {
+          method: 'post',
+          headers: {'Content-Type' : 'application/json'},
+          body: JSON.stringify({
+            'movieId': movieId
+          })
+        })
+        const movieInfo = await response.json()
+        console.log(movieInfo)
+        if(movieInfo.some(ele => ele.bookmarked == true)){  
+          bookmarkBtn.classList.add('bookmarked')
+          bookmarkStatus = true
+        }
+      }catch(err){console.log(err)}  
     })
     .catch(error => console.error(error)) 
 
@@ -89,6 +98,7 @@ bookmarkBtn.addEventListener('click', async () => {
       method: 'post',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
+        'poster': moviePoster.src,
         'movieId': movieId,
         'movieTitle': movieTitle.innerText, 
         'movieGenre': movieGenre.innerText,
@@ -124,11 +134,14 @@ async function addReview(){
         method: 'post',
         headers: {'Content-Type' : 'application/json'},
         body: JSON.stringify({
+          'title': movieTitle.innerText,
+          'poster': moviePoster.src,
           'movieId': movieId,
+          'genre': movieGenre.innerText, 
+          'plot': moviePlot.innerText,
           'review': review,
           'score': score,
-          'genre': movieGenre.innerText, 
-          'title': movieTitle.innerText,
+          
         })
       })
       const reviewsMade = await response.json()

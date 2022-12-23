@@ -19,12 +19,12 @@
       <div class="movie-list">
         <% for(let i=0; i<movies.length; i++){ %>
           <div class="listed-movie">
-            <img src="/netflix-poster.jpg" alt="">
+            <img class="poster" src="<%= movies[i].posterLink %>" alt="POSTER">
             <div class="listed-movie-content">
               <h3 class="title"><%= movies[i].movieTitle %></h3>
               <span class="score"><%= movies[i].score %></span>
               <span class="genre"><%= movies[i].genre %></span>
-              <p><%= movies[i].review%></p>
+              <p>"<%= movies[i].review%>"</p>
             </div>  
           </div>
         <% } %>

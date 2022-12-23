@@ -9,16 +9,5 @@ router.post('/addReview', reviewsController.addReview)
 router.put('/likeReview', reviewsController.likeReview)
 
 router.delete('/deleteReview', reviewsController.deleteReview)
-// router.post('/getReview', async (req, res) => {
-//   console.log(JSON.stringify(req.body.movieId))
-//   try {
-//     reviewCollection.find({movieId: req.body.movieId}).toArray()
-//       .then(data => {
-//         console.log(data)
-//         // res.render('index', {reviews: data})
-//         res.json(data)
-//       })
-//     } catch(err) {res.json({message: err.message})}    
-// })
 
 module.exports = router
