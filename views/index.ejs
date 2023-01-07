@@ -9,14 +9,22 @@
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
+   
   <div class="container">
-    <h1 class="site-name">Movie<span>Night</span></h1>
+    <h1 class="site-name"><a href="/">Movie<span>Night</span></a></h1>
     <nav>
-      <span><a href="#">Login</a></span>
+      <%if (!locals.session || locals.session.isAuth != true){ %>
+        <span><a href="/signup">Sign Up</a></span>
+        <span><a href="/login">Login</a></span>
+      <% } else { %>
+        <span id="current-user"><%= locals.user.username %></span>
+        <span><a href="/logout">Log Out</a></span>
+      <% } %>  
       <span><a href="/watchList" target="_blank">Watch List</a></span>
       <span><a href="/myCollection" target="_blank">My Collection</a></span>
     </nav>
-    <div class="form-section">
+
+    <div class="search-section">
       <form action="" method="">
         <p>What did you watch today?</p>
         <input type="text" name="movie" class="movie-search" placeholder="Enter the movie name...">
@@ -26,7 +34,7 @@
 
     <div class="movie-info">
       <i class="fas fa-bookmark"></i>
-      <div class="movie-poster"><img src="/netflix-poster.jpg" alt="" class="poster"></div>
+      <div class="movie-poster"><img src="/images/netflix-poster.jpg" alt="" class="poster"></div>  <!-- we are already using /public as static file in Express so no need to write it --> 
       <h2 class="title"></h2>
       <h5 class="genre"></h5>
       <h5 class="actors"></h5>
@@ -35,7 +43,6 @@
 
     <div class="review-section">
       <form action="/addReview" method="POST" class="review-form">
-        <!-- <input name="movieId" id="movie-id" type="text"> -->
         <span class="movie-id"></span>
         <div class="slider">
           <p>Rate your experience.</p>
@@ -50,7 +57,6 @@
       </form>  
     </div>
 
-    <!-- <a href="" class="load-reviews">Load Reviews</a> -->
     <div class="review-collection">
       <span>User Reviews</span>
       <ul class="review-list">

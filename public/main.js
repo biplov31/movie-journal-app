@@ -1,4 +1,25 @@
-document.querySelector('.search-btn').addEventListener('click', getMovie)
+// let loginLink = document.querySelector('.login-link')
+// let loginModal = document.querySelector('.login-form')
+// let wholePage = document.querySelector('.container')
+// loginLink.addEventListener('click', () => {
+//   loginModal.classList.remove('hidden')
+//   wholePage.classList.add('is-blurred')
+// })
+// let closeLogin = document.querySelector('.close-login')
+// closeLogin.addEventListener('click', () => {
+//   loginModal.classList.add('hidden')
+//   wholePage.classList.remove('is-blurred')
+// })
+
+let searchBtn = document.querySelector('.search-btn')
+searchBtn.addEventListener('click', getMovie)
+let movieSearch = document.querySelector('.movie-search')
+movieSearch.addEventListener('keypress', (event) => {
+  if(event.key == "Enter"){
+    event.preventDefault()
+    searchBtn.click()
+  }
+})
 let moviePlot = document.querySelector('.plot')
 let movieId = document.querySelector('.movie-id').value
 let movieGenre = document.querySelector('.genre')
@@ -7,7 +28,7 @@ let moviePoster = document.querySelector('.poster')
 let bookmarkStatus = false;
 
 async function getMovie(){
-  const enteredMovie = document.querySelector('.movie-search').value
+  const enteredMovie = movieSearch.value
   const finalName = enteredMovie.split(' ').join('+') 
 
   // fetching movie from the API
@@ -68,7 +89,7 @@ async function getMovie(){
     // if the movie has already been bookmarked before the bookmark button should be active
     .then(async function() {
       try{
-        const response = await fetch('watchList/getBookmarkedMovie', {
+        const response = await fetch('watchList/checkBookmark', {
           method: 'post',
           headers: {'Content-Type' : 'application/json'},
           body: JSON.stringify({
@@ -76,10 +97,12 @@ async function getMovie(){
           })
         })
         const movieInfo = await response.json()
-        console.log(movieInfo)
         if(movieInfo.some(ele => ele.bookmarked == true)){  
           bookmarkBtn.classList.add('bookmarked')
           bookmarkStatus = true
+        } else {
+          bookmarkBtn.classList.remove('bookmarked')
+          bookmarkStatus = false
         }
       }catch(err){console.log(err)}  
     })
@@ -175,9 +198,9 @@ async function addReview(){
 // Array.from(likeButton).forEach((element) => {
 //   element.addEventListener('click', likeReview)
 // })
+// const reviewContainer = this.parentNode.children[0]
 
 async function deleteReview(){
-  // const reviewContainer = this.parentNode.children[0]
   const reviewId = this.parentNode.childNodes[0]
   try{
     const response = await fetch('reviews/deleteReview', {  // we don't need to enter the full url in our fetch because we're in our local server; localhost:3000 + /deleteReview
@@ -187,9 +210,15 @@ async function deleteReview(){
         'reviewToDel': reviewId.innerText
       })
     })
-    const data = await response.json()
-    console.log(data)
-    reviewId.parentElement.remove()  // remove deleted item from the DOM without reloading the page  
+    if(response.status == 401){
+      console.log("Unauthorized access.")
+      window.location.href = '/login'
+    } else if(response.status == 400){
+      const data = await response.json()
+      console.log(data)      
+    } else {
+      reviewId.parentElement.remove()  // remove deleted item from the DOM without reloading the page  
+    }  
   } catch(err) {
     console.log(err)
   }
@@ -197,7 +226,6 @@ async function deleteReview(){
 
 async function likeReview(){
   const reviewId = this.parentElement.children[0].innerText
-  console.log(reviewId)
   let likesContainer = (this.parentElement.children[3])
   let totalLikes = Number(likesContainer.innerText)
   try{
@@ -209,10 +237,14 @@ async function likeReview(){
         'likeCount': totalLikes
       })
     })
-    const data = await response.json()
-    console.log(data)
-    console.log(`The likes has been updated to ${data.updatedLikes}`)
-    likesContainer.innerHTML = `<span>${data.updatedLikes}</span>`  // updating a part of the DOM without requiring a full page refresh
+    if(!response.ok){
+      window.location.href = '/login'
+    } else {
+      const data = await response.json()
+      console.log(data)
+      console.log(`The likes has been updated to ${data.updatedLikes}`)
+      likesContainer.innerHTML = `<span>${data.updatedLikes}</span>`  // updating a part of the DOM without requiring a full page refresh
+    }  
   } catch(err) {
     console.log(err)
   }

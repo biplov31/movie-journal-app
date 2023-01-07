@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h1 class="site-name"><a href="/">Movie<span>Night</span></a></h1>
+    <!-- <span class="close-login">&times;</span> -->
+    <div class="form-container">
+      <h2>LOG IN</h2>
+      <% if (locals.messages.errors) { %>
+        <% messages.errors.forEach( el => { %>
+            <div class="error-msg"><%= el.msg %></div>
+        <% }) %>    
+      <% } %>
+      <form action="/login" method="post" class="input-form">
+        <input class="input-field email" type="email" name="email" placeholder="Email">
+        <input class="input-field password" type="password" name="password" placeholder="Password">
+        <button type="submit" class="submit-btn">Log In</button>
+        <span>Don't have an account yet? <a href="/signup" class="signup-link">Sign up</a></span>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,6 +1,9 @@
 const mongoose = require('mongoose')
 
 const ReviewSchema = new mongoose.Schema({
+  user: {
+    type: String
+  },
   movieId: {
     type: String
   },

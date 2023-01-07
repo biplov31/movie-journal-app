@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 const movieSchema = new mongoose.Schema({
+  users: {type: Array},
   movieTitle: { type: String },
   posterLink: { type: String },
   genre: { type: String },

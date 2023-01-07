@@ -11,8 +11,8 @@ module.exports = {
 
   addReview: async (req, res) => {
     try{
-      await Movie.updateOne({movieId: req.body.movieId}, {movieTitle: req.body.title, posterLink: req.body.poster, movieId: req.body.movieId, plot: req.body.plot, genre: req.body.genre}, {upsert: true})
-      await Review.create({ movieId: req.body.movieId, review: req.body.review, score: req.body.score, likes: 0})
+      await Movie.updateOne({movieId: req.body.movieId}, {$push:{users: req.session.currentUser}, movieTitle: req.body.title, posterLink: req.body.poster, movieId: req.body.movieId, plot: req.body.plot, genre: req.body.genre}, {upsert: true})   // with updateOne we avoid adding the same movie multiple times when users have written multiple reviews
+      await Review.create({user: req.session.currentUser, movieId: req.body.movieId, review: req.body.review, score: req.body.score, likes: 0})
       res.send({review: req.body.review, score: req.body.score, likes: 0, _id: req.body._id})  // after adding a review to the database, we want to send respective database Id to the frontend so we can like/delete reviews based on the id
     } catch(err) {console.log(err)}  
   },
@@ -31,11 +31,13 @@ module.exports = {
   },
 
   deleteReview: async (req, res) => {
-    Review.deleteOne({_id: req.body.reviewToDel})  // on our database we're looking for an object that has a review property of what came through the request
-    .then(data => {
-      res.json("Delete successful.")
-    })
-    .catch(error => console.error(error))
+    const review = await Review.findOne({_id: req.body.reviewToDel, user: req.session.currentUser})
+    if(!review){
+      res.status(400).json({message: 'There is no review to delete.'}) // using sendStatus here throws an error because we are also sending JSON message
+    } else {
+      await Review.deleteOne({_id: req.body.reviewToDel, user: req.session.currentUser})
+      res.json('Delete successful.')
+    }
   }
 
 }  

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign up</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="signup-container">
+    <h1 class="site-name"><a href="/">Movie<span>Night</span></a></h1>
+    <div class="form-container">
+      <h2>SIGN UP</h2>
+      <% if (locals.messages.errors) { %>
+        <% messages.errors.forEach( el => { %>
+            <div class="error-msg"><%= el.msg %></div>
+        <% }) %>    
+      <% } %>
+      <form action="/signup" method="post" class="input-form">
+        <input class="input-field username" type="text" name="username" placeholder="Username">
+        <input class="input-field email" type="email" name="email" placeholder="Email">
+        <input class="input-field password" type="password" name="password" placeholder="Password">
+        <input class="input-field password" type="password" name="rePassword" placeholder="Confirm password">
+        <button type="submit" class="submit-btn">Sign Up</button>
+        <span>Already have an account? <a href="/login" class="login-link">Log In</a></span>
+      </form>
+    </div>  
+  </div>
+</body>
+</html>
