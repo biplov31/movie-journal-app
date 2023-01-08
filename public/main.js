@@ -11,15 +11,7 @@
 //   wholePage.classList.remove('is-blurred')
 // })
 
-let searchBtn = document.querySelector('.search-btn')
-searchBtn.addEventListener('click', getMovie)
-let movieSearch = document.querySelector('.movie-search')
-movieSearch.addEventListener('keypress', (event) => {
-  if(event.key == "Enter"){
-    event.preventDefault()
-    searchBtn.click()
-  }
-})
+let movieSearchField = document.querySelector('.movie-search-field')
 let moviePlot = document.querySelector('.plot')
 let movieId = document.querySelector('.movie-id').value
 let movieGenre = document.querySelector('.genre')
@@ -27,13 +19,74 @@ let movieTitle = document.querySelector('.title')
 let moviePoster = document.querySelector('.poster')
 let bookmarkStatus = false;
 
-async function getMovie(){
-  const enteredMovie = movieSearch.value
-  const finalName = enteredMovie.split(' ').join('+') 
+// auto-complete search suggestions
+const searchResults = document.querySelector('.result-list')
+movieSearchField.addEventListener('input', async function(){
+  console.log('Search field triggered.')
+  const query = movieSearchField.value.trim()
+  if(query.length > 0){
+    searchResults.classList.remove('hide-content')
+  } else {
+    searchResults.classList.add('hide-content')
+  }
+  if(!query) return
 
-  // fetching movie from the API
-  const url = `https://www.omdbapi.com/?t=${finalName}&apikey=75dd0b86`
-  fetch(url)
+  try{
+    searchResults.innerHTML = ''
+    const response = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=75dd0b86`)
+    const data = await response.json()
+    console.log(data)
+    const movies = data.Search
+    console.log(movies)
+    if(!movies || data.Response == "False") return
+    movies.forEach(movie => {
+      let resultListItem = document.createElement('div')
+      resultListItem.dataset.id = movie.imdbID
+      resultListItem.classList.add('result-list-item')
+      if(movie.Poster != "N/A"){
+        movieThumb = movie.Poster
+      } else {
+        movieThumb = '/icons/no-image.png'
+      }
+      resultListItem.innerHTML = `
+      <img src="${movieThumb}" alt="">
+      <div class="result-item-info">
+        <h4>${movie.Title}</h4>
+        <span>${movie.Year}</span>
+      </div>`
+      searchResults.appendChild(resultListItem)      
+    })
+
+    // users can load movies by clicking on the results from auto-complete suggestions
+    let searchedMovies = searchResults.querySelectorAll('.result-list-item')
+    searchedMovies.forEach(movie => {
+      movie.addEventListener('click', async() => {
+        searchResults.classList.add('hide-content')
+        const urlId = `https://www.omdbapi.com/?i=${movie.dataset.id}&apikey=75dd0b86`
+        getMovie(urlId)
+      })
+    })
+  } catch (error) {
+    console.error(error)
+  }
+})
+
+let searchBtn = document.querySelector('.search-btn')
+searchBtn.addEventListener('click',function() {
+  const enteredMovie = movieSearchField.value
+  const finalName = enteredMovie.split(' ').join('+') 
+  urlTitle = `https://www.omdbapi.com/?t=${finalName}&apikey=75dd0b86`
+  getMovie(urlTitle)  
+})
+movieSearchField.addEventListener('keypress', (event) => {
+  if(event.key == "Enter"){
+    event.preventDefault()
+    searchBtn.click()
+  }
+})
+
+async function getMovie(url){ 
+  await fetch(url)
     .then(res => res.json())
     .then(data => {
       console.log(data)

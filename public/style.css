@@ -68,18 +68,23 @@ nav{
 .search-section{
   margin-top: 5rem;
   display: inline-block;
-  width: 50vw;
+  width: 25%;
+  position: relative;
+  /* padding: 0 50px; */
 }
-.movie-search{
-  margin: 10px;
-  padding: 5px;
-  width: 200px;
+.movie-search-field{
+  margin: 10px 10px 0 0;
+  padding: 7px;
+  width: 70%;
   border-radius: 6px;
   border: none;
   text-align: left;
+  font-size: 14px;
 }
 .search-btn{
-  padding: 6px;
+  /* width: 30%; */
+  padding: 6px 7px;
+  font-size: 14px;
   border-radius: 8px;
   border: none;
   cursor: pointer;
@@ -90,6 +95,37 @@ nav{
   background-color: #97ace6;
   transform: scale(1.1);
   outline: none;
+}
+.result-list{
+  margin-top: 5px;
+  position: absolute;
+  left: 2%;
+  top: 100%;
+  width: 100%;
+  max-height: 300px;
+  overflow-y: scroll;
+  z-index: 10;
+}
+.result-list-item{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  background-color: #1f1f1f;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+.result-list-item:hover{
+  background-color: #4d4847;
+}
+.result-list-item img{
+  width: 20%;  
+}
+.result-item-info{
+  font-size: 13px;
+  text-align: center;
+  width: 70%;
 }
 .movie-info{
   /* outline: 2px solid black; */
@@ -111,8 +147,8 @@ nav{
   font-size: 30px;
   /* display: none; */
   position: absolute;
-  top: 8%;
-  left: 5%;
+  top: 9%;
+  left: 7%;
   transform: translateY(-50%);
   opacity: 0.5;
   cursor: pointer;
@@ -357,34 +393,31 @@ nav{
   background-color: #111;
   padding: 10px;
 }
-.main{
+.main-content{
   position: relative;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
 }
-.parallax.main-content{
+.main-content-bg{
   background-image: url('./images/film1.jpg');
-  height: 100vh;
-  /* position: fixed; */
-  z-index: -100;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  z-index: -1;
   opacity: 0.4;
 }
-
-/* .parallax:nth-child(2){
-  background-image: url(./img/film2.jpg);
-  min-height: 400px;
-}
-.parallax:nth-child(3){
-  background-image: url(./img/film1.jpg);
-  min-height: 400px;
-} */
 .movie-list{
-  display: flex;
-  flex-direction: column;
-  position: absolute;
   width: 50%;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
 }
 .listed-movie{
   display: flex;
@@ -392,15 +425,13 @@ nav{
   padding: 15px;
   background-color: rgba(85, 85, 82, 0.94);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  /* border-radius: 10px; */
   width: 100%;
-  margin: 20px auto;
+  margin: 30px auto;
 }
 .listed-movie img{
   height: 150px;
   background-size: contain;
   background-position: center;
-  /* border-radius: 15px; */
   width: 40%;
 }
 .listed-movie-content{
@@ -423,7 +454,7 @@ nav{
 }
 .parallax.footer-content{
   background-image: url('./images/film2.jpg');
-  height: 140px;
+  height: 100px;
   background-position: top;
 }
 

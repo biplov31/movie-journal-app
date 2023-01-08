@@ -25,11 +25,12 @@
     </nav>
 
     <div class="search-section">
-      <form action="" method="">
         <p>What did you watch today?</p>
-        <input type="text" name="movie" class="movie-search" placeholder="Enter the movie name...">
+        <input type="text" name="movie" class="movie-search-field" placeholder="Enter the movie name...">
         <button type="button" class="search-btn">Search</button>
-      </form>
+
+        <div class="result-list">
+        </div>
     </div>  
 
     <div class="movie-info">
@@ -63,12 +64,12 @@
         <% if (typeof reviews !== 'undefined') { %>
           <% for(let i=0; i<reviews.length; i++){ %>
             <li class="review">
-              <p class="review-statement"><%= reviews[i].review %></p>
+              <!-- <p class="review-statement"><%= reviews[i].review %></p>
               <span class="score"><%= reviews[i].score %></span>
               <span><%= reviews[i].likes %></span>
               <span class="fa fa-thumbs-up"></span>
               <span class="fa fa-trash"></span>
-            </li>
+            </li> -->
           <% } %>  
         <% } %>       
     
