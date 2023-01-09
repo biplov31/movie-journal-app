@@ -19,11 +19,6 @@ module.exports = {
     } else {
       await Bookmark.updateOne({movieId: req.body.movieToDel}, {$pull: {users: req.session.currentUser}})  // on our database we're looking for an object that has a review property of what came through the request
     }
-    // .then(data => {
-    //   res.json("Movie removed from watch list.")
-    // })
-    // .catch(error => console.error(error))
-      
   },
 
   checkBookmark: async(req, res) => {

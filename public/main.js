@@ -2,12 +2,12 @@
 // let loginModal = document.querySelector('.login-form')
 // let wholePage = document.querySelector('.container')
 // loginLink.addEventListener('click', () => {
-//   loginModal.classList.remove('hidden')
+//   loginModal.classList.remove('hide-content')
 //   wholePage.classList.add('is-blurred')
 // })
 // let closeLogin = document.querySelector('.close-login')
 // closeLogin.addEventListener('click', () => {
-//   loginModal.classList.add('hidden')
+//   loginModal.classList.add('hide-content')
 //   wholePage.classList.remove('is-blurred')
 // })
 
@@ -27,8 +27,8 @@ movieSearchField.addEventListener('input', async function(){
     searchResults.classList.remove('hide-content')
   } else {
     searchResults.classList.add('hide-content')
+    return
   }
-  if(!query) return
 
   try{
     searchResults.innerHTML = ''
@@ -95,7 +95,7 @@ async function getMovie(url){
     .then(data => {
       console.log(data)
       movieId = data.imdbID
-      moviePoster.src = data.Poster
+      data.Poster == 'N/A' ? moviePoster.src = '/icons/no-image.png' : moviePoster.src = data.Poster
       movieTitle.innerText = data.Title
       movieGenre.innerText = data.Genre
       document.querySelector('.actors').innerText = 'Starring: ' + data.Actors
@@ -104,6 +104,7 @@ async function getMovie(url){
 
       checkPreviousBookmark(movieId)
       getPreviousReviews(movieId)
+      // checkLikedReviews(movieId)
     })
     .catch(error => console.error(error)) 
   }
@@ -118,37 +119,51 @@ async function getPreviousReviews(movieId) {
         'movieId': movieId
       })
     })
-    const reviewsMade = await response.json()
-    // updating new review to the DOM without using the database or reloading the page
-    const reviewList = document.querySelector('.review-list')
-    reviewList.innerHTML = '' // so the reviews from earlier searches don't stay in the DOM
-    if(!reviewsMade.some(ele => ele.review !== undefined)){  // if none of the objects inside of the array reviewsMade have any review property, it means the movie has not been reviewed yet
-      reviewList.innerText = "There are no reviews for this movie yet."
-      return
-    }
-    reviewsMade.forEach((item) => {
+    const data = await response.json()
+    let reviewsMade = data.reviews
+    let activeUser = data.userId
+    displayReviews(reviewsMade, activeUser)
+  } catch(error){console.error(error)}
+}  
+
+// updating new review to the DOM without using the database or reloading the page
+async function displayReviews(reviews, user){
+  const reviewList = document.querySelector('.review-list')
+  reviewList.innerHTML = '' // so the reviews from earlier searches don't stay in the DOM
+  if(reviews.length == 0){  
+    reviewList.innerText = "There are no reviews for this movie yet."
+    return
+  }
+  reviews.forEach((item) => {
       if(item.review !== undefined){
         let newReview = document.createElement('li')
         newReview.classList.add('review')
         newReview.innerHTML = 
-          `<span class="data-id hidden">${item._id}</span>`
+          `<span class="data-id hide-content">${item._id}</span>`
           + `<p class="review-statement">${item.review}</p>`
           + `<span class="score">${item.score}</span>`
           + `<span>${item.likes}</span>`
 
           let likeBtn = document.createElement('span')
-          likeBtn.classList.add('fa', 'fa-thumbs-up')
+          if(user && item.likedBy.includes(user)){  // in our database, reviews have an attribute called 'likedBy' which is an array that stored id of the users who have liked that particular review. if the array has the id of the currentUser, it means the logged in user has liked that particular review and hence the like button must be active 
+            likeBtn.classList.add('fa', 'fa-thumbs-up', 'liked')
+          } else {
+            likeBtn.classList.add('fa', 'fa-thumbs-up')
+          } 
           likeBtn.addEventListener('click', likeReview)
-          let deleteBtn = document.createElement('span')
-          deleteBtn.classList.add('fa', 'fa-trash')
-          deleteBtn.addEventListener('click', deleteReview)
-          newReview.append(likeBtn, deleteBtn)
+          newReview.appendChild(likeBtn)
+
+          if(user == item.user){  // if the active user matches the 'user' attribute of a review object i.e. the active user is the auther of a review, only then they will have access to the delete button
+            let deleteBtn = document.createElement('span')
+            deleteBtn.classList.add('fa', 'fa-trash')
+            deleteBtn.addEventListener('click', deleteReview)
+            newReview.append(deleteBtn)
+          }
 
         reviewList.appendChild(newReview) 
       }  
-    })
-  } catch(error){console.error(error)}
-}  
+    })     
+}
 
 // if the movie has already been bookmarked before the bookmark button should be active
 async function checkPreviousBookmark(movieId) {
@@ -161,7 +176,7 @@ async function checkPreviousBookmark(movieId) {
       })
     })
     const movieInfo = await response.json()
-    console.log(movieInfo)
+    // console.log(movieInfo)
     if(movieInfo.some(ele => ele.bookmarked == true)){  
       bookmarkBtn.classList.add('bookmarked')
       bookmarkStatus = true
@@ -246,20 +261,7 @@ async function addReview(){
 }  
 
 
-
 // liking and deleting the reviews
-
-// this doesn't work now since we're appending buttons from javascript and not grabbing them from the HTML
-// const deleteButton = document.querySelectorAll('.fa-trash')
-// const likeButton = document.querySelectorAll('.fa-thumbs-up')
-
-// Array.from(deleteButton).forEach((element) => {
-//   element.addEventListener('click', deleteReview)
-// })
-// Array.from(likeButton).forEach((element) => {
-//   element.addEventListener('click', likeReview)
-// })
-// const reviewContainer = this.parentNode.children[0]
 
 async function deleteReview(){
   const reviewId = this.parentNode.childNodes[0]
@@ -286,14 +288,19 @@ async function deleteReview(){
 }
 
 async function likeReview(){
+  let likeBtn = this.parentElement.children[4]
+  likeBtn.classList.toggle('liked')
   const reviewId = this.parentElement.children[0].innerText
   let likesContainer = (this.parentElement.children[3])
   let totalLikes = Number(likesContainer.innerText)
+  let action
+  likeBtn.classList.contains('liked') ? action = 'like' : action = 'unlike'
   try{
     const response = await fetch('reviews/likeReview', {
       method: 'put', 
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
+        'actionToPerform': action,
         'reviewToLike': reviewId,
         'likeCount': totalLikes
       })
@@ -303,7 +310,6 @@ async function likeReview(){
     } else {
       const data = await response.json()
       console.log(data)
-      console.log(`The likes has been updated to ${data.updatedLikes}`)
       likesContainer.innerHTML = `<span>${data.updatedLikes}</span>`  // updating a part of the DOM without requiring a full page refresh
     }  
   } catch(err) {

@@ -13,6 +13,9 @@ const ReviewSchema = new mongoose.Schema({
   likes: {
     type: Number
   },
+  likedBy: {
+    type: Array
+  },
   score: {
     type: Number
   },

@@ -5,7 +5,7 @@ module.exports = {
   getReview: async(req, res) => {
     try {
       const movieReviews = await Review.find({movieId: req.body.movieId}) // we don't need toArray() here mongoose just makes it work
-      res.json(movieReviews)
+      res.send({reviews: movieReviews, userId: req.session.currentUser})
     } catch(err) {res.json({message: err.message})} 
   }, 
 
@@ -18,16 +18,17 @@ module.exports = {
   },
 
   likeReview: async (req, res) => {
-    Review.updateOne({_id: req.body.reviewToLike}, {
-      $set: {
-        likes: req.body.likeCount + 1
-      }
-    })
+    try{
+      let review
+      const { actionToPerform, reviewToLike, likeCount } = req.body
+      if(actionToPerform === 'like'){
+        review = await Review.findOneAndUpdate({_id: reviewToLike}, {likes: likeCount + 1, $push:{likedBy: req.session.currentUser}}, {new: true})
+      } else {
+        review = await Review.findOneAndUpdate({_id: reviewToLike}, {likes: likeCount - 1, $pull:{likedBy: req.session.currentUser}}, {new: true})
+      }  
+      res.send({updatedLikes: review.likes})
+    } catch(error) {console.error(error)}  
     // client-side code sends a reviewToLike and its likeCount to the server using a fetch request, the server.js increments the likes in the database and also sends it back to main.js as updatedLikes. main.js then uses updatedLikes to update the DOM
-    .then(result => {
-      res.send({updatedLikes: req.body.likeCount + 1})
-    })
-    .catch(error => console.error(error))
   },
 
   deleteReview: async (req, res) => {

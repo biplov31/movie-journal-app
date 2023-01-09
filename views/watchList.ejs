@@ -17,6 +17,9 @@
       <div class="main-content-bg"></div>
       
       <div class="watch-list movie-list">
+        <% if(movies.length == 0){ %>
+          <div class="empty-text"><h2>There are no movies here.</h2></div>
+        <% } %>  
         <% for(let i=0; i<movies.length; i++){ %>
           <div class="watchlisted-movie listed-movie">
             <img class="poster" src="<%= movies[i].posterLink%>" alt="">
