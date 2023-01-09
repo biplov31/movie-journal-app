@@ -22,7 +22,6 @@ let bookmarkStatus = false;
 // auto-complete search suggestions
 const searchResults = document.querySelector('.result-list')
 movieSearchField.addEventListener('input', async function(){
-  console.log('Search field triggered.')
   const query = movieSearchField.value.trim()
   if(query.length > 0){
     searchResults.classList.remove('hide-content')
@@ -35,44 +34,49 @@ movieSearchField.addEventListener('input', async function(){
     searchResults.innerHTML = ''
     const response = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=75dd0b86`)
     const data = await response.json()
-    console.log(data)
     const movies = data.Search
-    console.log(movies)
     if(!movies || data.Response == "False") return
-    movies.forEach(movie => {
-      let resultListItem = document.createElement('div')
-      resultListItem.dataset.id = movie.imdbID
-      resultListItem.classList.add('result-list-item')
-      if(movie.Poster != "N/A"){
-        movieThumb = movie.Poster
-      } else {
-        movieThumb = '/icons/no-image.png'
-      }
-      resultListItem.innerHTML = `
-      <img src="${movieThumb}" alt="">
-      <div class="result-item-info">
-        <h4>${movie.Title}</h4>
-        <span>${movie.Year}</span>
-      </div>`
-      searchResults.appendChild(resultListItem)      
-    })
+    displayMovieList(movies)
 
-    // users can load movies by clicking on the results from auto-complete suggestions
-    let searchedMovies = searchResults.querySelectorAll('.result-list-item')
-    searchedMovies.forEach(movie => {
-      movie.addEventListener('click', async() => {
-        searchResults.classList.add('hide-content')
-        const urlId = `https://www.omdbapi.com/?i=${movie.dataset.id}&apikey=75dd0b86`
-        getMovie(urlId)
-      })
-    })
   } catch (error) {
     console.error(error)
   }
 })
 
+function displayMovieList(movies){
+  movies.forEach(movie => {
+    let resultListItem = document.createElement('div')
+    resultListItem.dataset.id = movie.imdbID
+    resultListItem.classList.add('result-list-item')
+    if(movie.Poster != "N/A"){
+      movieThumb = movie.Poster
+    } else {
+      movieThumb = '/icons/no-image.png'
+    }
+    resultListItem.innerHTML = `
+    <img src="${movieThumb}" alt="">
+    <div class="result-item-info">
+      <h4>${movie.Title}</h4>
+      <span>${movie.Year}</span>
+    </div>`
+    searchResults.appendChild(resultListItem)      
+  })
+
+  // users can load movies by clicking on the results from auto-complete suggestions
+  let searchedMovies = searchResults.querySelectorAll('.result-list-item')
+  searchedMovies.forEach(movie => {
+    movie.addEventListener('click', async() => {
+      searchResults.classList.add('hide-content')
+      const urlId = `https://www.omdbapi.com/?i=${movie.dataset.id}&apikey=75dd0b86`
+      getMovie(urlId)
+    })
+  })
+}
+
+// searching movies from the search button
 let searchBtn = document.querySelector('.search-btn')
 searchBtn.addEventListener('click',function() {
+  searchResults.classList.add('hide-content')
   const enteredMovie = movieSearchField.value
   const finalName = enteredMovie.split(' ').join('+') 
   urlTitle = `https://www.omdbapi.com/?t=${finalName}&apikey=75dd0b86`
@@ -97,72 +101,76 @@ async function getMovie(url){
       document.querySelector('.actors').innerText = 'Starring: ' + data.Actors
       moviePlot.classList.remove('hide-content')
       moviePlot.innerText = data.Plot
-    })
-    // sending the Imdb Id of a movie to our server so we can display the reviews made for that particular movie after grabbing it from the database. We cannot use the GET method here because it doesn't have a body (we could use query parameter though), but POST method has a body through which we can send data to the server
-    .then(async function() {
-      try{
-        const response = await fetch('reviews/getReview', {
-          method: 'post',
-          headers: {'Content-Type' : 'application/json'},
-          body: JSON.stringify({
-            'movieId': movieId
-          })
-        })
-        const reviewsMade = await response.json()
-        // updating new review to the DOM without using the database or reloading the page
-        const reviewList = document.querySelector('.review-list')
-        reviewList.innerHTML = '' // so the reviews from earlier searches don't stay in the DOM
-        if(!reviewsMade.some(ele => ele.review !== undefined)){  // if none of the objects inside of the array reviewsMade have any review property, it means the movie has not been reviewed yet
-          reviewList.innerText = "There are no reviews for this movie yet."
-          return
-        }
-        reviewsMade.forEach((item) => {
-          if(item.review !== undefined){
-            let newReview = document.createElement('li')
-            newReview.classList.add('review')
-            newReview.innerHTML = 
-              `<span class="data-id hidden">${item._id}</span>`
-              + `<p class="review-statement">${item.review}</p>`
-              + `<span class="score">${item.score}</span>`
-              + `<span>${item.likes}</span>`
 
-              let likeBtn = document.createElement('span')
-              likeBtn.classList.add('fa', 'fa-thumbs-up')
-              likeBtn.addEventListener('click', likeReview)
-              let deleteBtn = document.createElement('span')
-              deleteBtn.classList.add('fa', 'fa-trash')
-              deleteBtn.addEventListener('click', deleteReview)
-              newReview.append(likeBtn, deleteBtn)
-
-            reviewList.appendChild(newReview) 
-          }  
-        })
-      } catch(err) {console.log(err)}
-    })
-    // if the movie has already been bookmarked before the bookmark button should be active
-    .then(async function() {
-      try{
-        const response = await fetch('watchList/checkBookmark', {
-          method: 'post',
-          headers: {'Content-Type' : 'application/json'},
-          body: JSON.stringify({
-            'movieId': movieId
-          })
-        })
-        const movieInfo = await response.json()
-        if(movieInfo.some(ele => ele.bookmarked == true)){  
-          bookmarkBtn.classList.add('bookmarked')
-          bookmarkStatus = true
-        } else {
-          bookmarkBtn.classList.remove('bookmarked')
-          bookmarkStatus = false
-        }
-      }catch(err){console.log(err)}  
+      checkPreviousBookmark(movieId)
+      getPreviousReviews(movieId)
     })
     .catch(error => console.error(error)) 
+  }
+  
+// sending the Imdb Id of a movie to our server so we can display the reviews made for that particular movie after grabbing it from the database. We cannot use the GET method here because it doesn't have a body (we could use query parameter though), but POST method has a body through which we can send data to the server
+async function getPreviousReviews(movieId) {
+  try{
+    const response = await fetch('reviews/getReview', {
+      method: 'post',
+      headers: {'Content-Type' : 'application/json'},
+      body: JSON.stringify({
+        'movieId': movieId
+      })
+    })
+    const reviewsMade = await response.json()
+    // updating new review to the DOM without using the database or reloading the page
+    const reviewList = document.querySelector('.review-list')
+    reviewList.innerHTML = '' // so the reviews from earlier searches don't stay in the DOM
+    if(!reviewsMade.some(ele => ele.review !== undefined)){  // if none of the objects inside of the array reviewsMade have any review property, it means the movie has not been reviewed yet
+      reviewList.innerText = "There are no reviews for this movie yet."
+      return
+    }
+    reviewsMade.forEach((item) => {
+      if(item.review !== undefined){
+        let newReview = document.createElement('li')
+        newReview.classList.add('review')
+        newReview.innerHTML = 
+          `<span class="data-id hidden">${item._id}</span>`
+          + `<p class="review-statement">${item.review}</p>`
+          + `<span class="score">${item.score}</span>`
+          + `<span>${item.likes}</span>`
 
+          let likeBtn = document.createElement('span')
+          likeBtn.classList.add('fa', 'fa-thumbs-up')
+          likeBtn.addEventListener('click', likeReview)
+          let deleteBtn = document.createElement('span')
+          deleteBtn.classList.add('fa', 'fa-trash')
+          deleteBtn.addEventListener('click', deleteReview)
+          newReview.append(likeBtn, deleteBtn)
+
+        reviewList.appendChild(newReview) 
+      }  
+    })
+  } catch(error){console.error(error)}
+}  
+
+// if the movie has already been bookmarked before the bookmark button should be active
+async function checkPreviousBookmark(movieId) {
+  try{
+    const response = await fetch('watchList/checkBookmark', {
+      method: 'post',
+      headers: {'Content-Type' : 'application/json'},
+      body: JSON.stringify({
+        'movieId': movieId
+      })
+    })
+    const movieInfo = await response.json()
+    console.log(movieInfo)
+    if(movieInfo.some(ele => ele.bookmarked == true)){  
+      bookmarkBtn.classList.add('bookmarked')
+      bookmarkStatus = true
+    } else {
+      bookmarkBtn.classList.remove('bookmarked')
+      bookmarkStatus = false
+    }
+  }catch(err){console.log(err)}  
 }
-
 
 // bookmarking a movie
 let bookmarkBtn = document.querySelector('.fa-bookmark')
