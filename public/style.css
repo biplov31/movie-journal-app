@@ -5,21 +5,22 @@
   text-align: center;
 }
 html{
-  font-size: 100%;
+  font-size: 62.5%;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   color: gainsboro;
-  padding-bottom: 40px;
+  padding-bottom: 4rem;
   height: 100%;
 }
 body{
   height: 100%;
+  font-size: 1.6rem;
 }
 a{
   text-decoration: none;
   color: gainsboro;
 }
 .container{
-  padding-bottom: 30px;
+  padding-bottom: 5rem;
   background-color:#4d4847;
   /* min-height: 100vh; */
   max-width: 100vw;
@@ -29,10 +30,10 @@ a{
   opacity: 0.9;
 }
 .site-name{
-  font-size: 1.5rem;
+  font-size: 2.4rem;
   position: absolute;
-  left: 1.5rem;
-  top: 1rem;
+  left: 2.4rem;
+  top: 1.6rem;
 }
 .site-name span{
   color:#919093;
@@ -40,7 +41,7 @@ a{
 #current-user{
   color: #d4aa11;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 1.8rem;
   font-family:Verdana, Geneva, Tahoma, sans-serif;
 }
 #current-user:hover{
@@ -52,44 +53,42 @@ a{
 nav{
   width: 30%;
   position: absolute;
-  right: 1.5rem;
-  top: 1.3rem;
+  right: 2.3rem;
+  top: 2rem;
+}
+.nav-menu{
+  width: 100%;
   display: flex;
   justify-content: space-between;
 }
+.nav-menu a:hover{
+  color: #d4aa11;
+}
 
-/* .close-login{
-  color: #aaaaaa;
-  float: right;
-  font-size: 30px;
-  cursor: pointer;
-  margin-top: -25px;
-} */
 .search-section{
-  margin-top: 5rem;
+  margin-top: 8rem;
   display: inline-block;
   width: 25%;
   position: relative;
   /* padding: 0 50px; */
 }
 .movie-search-field{
-  margin: 10px 10px 0 0;
-  padding: 7px;
+  margin: 1rem 1rem 0 0;
+  padding: 0.7rem;
   width: 70%;
   border-radius: 6px;
   border: none;
   text-align: left;
-  font-size: 14px;
+  font-size: 1.4rem;
 }
 .search-btn{
   /* width: 30%; */
-  padding: 6px 7px;
-  font-size: 14px;
+  padding: 0.6rem 0.7rem;
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  outline: #97ace6 2px solid;
-  transition: outline 0.1s ease-out, transform 0.2s ease-in;
+  outline: #97ace6 1.5px solid;
+  transition: outline 0.1s ease-out, transform 0.1s ease-in;
 }
 .search-btn:hover{
   background-color: #97ace6;
@@ -97,12 +96,12 @@ nav{
   outline: none;
 }
 .result-list{
-  margin-top: 5px;
+  margin-top: 0.5rem;
   position: absolute;
   left: 2%;
   top: 100%;
   width: 100%;
-  max-height: 300px;
+  max-height: 30rem;
   overflow-y: scroll;
   z-index: 10;
 }
@@ -111,7 +110,7 @@ nav{
   display: flex;
   flex-direction: row;
   flex: 1 1 0;
-  gap: 10px;
+  gap: 1rem;
   background-color: #1f1f1f;
   border-bottom: 1px solid #ccc;
   cursor: pointer;
@@ -122,16 +121,16 @@ nav{
 }
 .result-list-item img{
   width: 20%;  
+  aspect-ratio: 1/1;
 }
 .result-item-info{
-  font-size: 13px;
+  font-size: 1.3rem;
   text-align: center;
   width: 70%;
 }
 .movie-info{
-  /* outline: 2px solid black; */
   box-shadow: 1px 2px 4px 2px rgba(0, 0, 0, 0.5);
-  padding: 15px 5px;
+  padding: 1.5rem 0.5rem;
   width: 60%;
   margin: 2rem auto 0 auto;
   display: flex;
@@ -145,8 +144,7 @@ nav{
   outline: 1px solid #000;
 }
 .fa-bookmark{
-  font-size: 30px;
-  /* display: none; */
+  font-size: 3rem;
   position: absolute;
   top: 9%;
   left: 7%;
@@ -169,9 +167,8 @@ nav{
 }
 .poster{
   margin: auto;
-  height: 300px;
+  max-height: 35rem;
   width: 90%;
-  /* object-fit: cover; */
   background-position: center;
   background-size: cover;
 }
@@ -188,7 +185,7 @@ nav{
   display: none;
 }
 .plot{
-  margin-top: 10px;
+  margin-top: 1rem;
   width: 70%;
   text-align: justify;
   position: relative;
@@ -196,7 +193,7 @@ nav{
 .plot::before, .plot::after{
   content: '"';
   color: #919093;
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: bolder;
   display: inline-block;
   height: 1rem;
@@ -212,30 +209,34 @@ nav{
   display: none;
 }
 .review-section{
+  margin-inline: auto;
   display: flex;
   flex-direction: column;
-  /* align-items: center;
-  justify-content: center; */
+  width: 35vw;
+  align-items: center;
+  justify-content: center;
+}
+.review-form{
+  width: 100%;
 }
 #movie-id{
   display: none;
 } 
 .slider{
-  margin: 2rem auto 0.5rem auto;
-  width: 25%;
-  padding: 15px;
-  border-radius: 20px;
-  box-shadow: 0px 15px 40px #b4a89a66;
+  margin: 5rem auto 1rem auto;
+  width: 70%;
+  padding: 1.5rem;
+  border-radius: 2rem;
+  box-shadow: 0 1.5rem 4rem #b4a89a66;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 .slider p{
   display: block;
-  /* position: relative; */
   top: 0;
-  margin: 5px auto;
+  margin: 0.5rem auto;
   display: none;
 }
 .slider span{
@@ -251,25 +252,25 @@ nav{
   accent-color: #d7c3c3;
 }
 .movie-review{
-  width: 40%;
+  width: 100%;
   height: 16vh;
-  padding: 1em;
+  padding: 1.5rem;
   display: block;
-  margin: 0.5rem auto;
+  margin: 1.3rem auto;
   border: 2px solid #ccc;
   border-radius: 4px;
   background-color: #f8f8f8;
-  font-size: 1rem;
+  font-size: 1.6rem;
   text-align: left;
   resize: none;
 }
 .review-submit-btn{
-  width: 7rem;
-  padding: 6px;
+  width: 35%;
+  padding: 0.6rem;
   border-radius: 15px;
   border: none;
   cursor: pointer;
-  margin: 0 auto 3rem auto;
+  margin: 0 auto 4rem auto;
   transition: background-color 0.3s ease;
 }
 .review-submit-btn:hover{
@@ -278,8 +279,8 @@ nav{
 .success-popup{
   background-color: rgba(75, 181, 67, 1);
   color: #f8f8f8;
-  width: 200px;
-  padding: 15px 5px;
+  width: 20rem;
+  padding: 1.5rem 0.5rem;
   border-radius: 10px;
   position: fixed;
   top: 40vh;
@@ -293,27 +294,26 @@ nav{
   transform: translate(-50%, -50%) scale(1);
 }
 .load-reviews{
-  padding: 10px;
+  padding: 1rem;
   text-decoration: none;
   background-color: #d4aa11;
   cursor: pointer;
   border-radius: 10px;
 }
 .review-collection{
-  margin: 30px;
-  margin-bottom: 50px;
+  margin: 3rem;
+  margin-bottom: 5rem;
 }
 .review-collection>span{
-  font-size: 1.5rem;
+  font-size: 2.3rem;
   font-weight: 600;
   display: block;
-  /* margin-bottom: 30px; */
 }
 .review-list{
-  margin: 1rem auto 5rem auto;
+  margin: 1.5rem auto 5rem auto;
   outline: 1px solid #171717;
   width: 60%;
-  max-height: 350px;
+  max-height: 35rem;
   overflow-y: scroll;
 }
 .review{
@@ -370,7 +370,7 @@ nav{
 .parallax.header-content{
   background-image: url('./images/film2.jpg');
   border: 1px solid black;
-  min-height: 180px;
+  min-height: 18rem;
   opacity: 0.8;
 }
 .par-text{
@@ -380,14 +380,14 @@ nav{
   width: 100%;
   text-align: center;
   color: #000;
-  font-size: 30px;
+  font-size: 3rem;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
 .par-text span{
   color: #fff;
   background-color: #111;
-  padding: 10px;
+  padding: 1rem;
 }
 .main-content{
   position: relative;
@@ -413,27 +413,27 @@ nav{
   opacity: 0.4;
 }
 .empty-text{
-  padding-top: 3rem;
+  padding-top: 4rem;
   height: 50vh;
   margin: 0 auto;
   color: #4d4847;
   font-weight: 900;
-  font-size: 1.7rem;
+  font-size: 2rem;
 }
 .movie-list{
   width: 50%;
 }
 .listed-movie{
   display: flex;
-  gap: 0.8rem;
-  padding: 15px;
+  gap: 1rem;
+  padding: 1.5rem;
   background-color: rgba(85, 85, 82, 0.94);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   width: 100%;
-  margin: 30px auto;
+  margin: 3rem auto;
 }
 .listed-movie img{
-  height: 150px;
+  height: 15rem;
   background-size: contain;
   background-position: center;
   width: 40%;
@@ -453,7 +453,7 @@ nav{
   line-height: 0.9;
 }
 .listed-movie-content p{
-  margin-top: 0.6rem;
+  margin-top: 1rem;
   text-align: left;
 }
 .parallax.footer-content{
@@ -465,17 +465,28 @@ nav{
 
 
 /* Sign up and Log in */
-/* .form-container.login-container{
+/* .close-login{
+  color: #aaaaaa;
+  float: right;
+  font-size: 30px;
+  cursor: pointer;
+  margin-top: -10px; 
+  margin-right: 10px;
+}
+.login-modal{
+  width: 50vw;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /* z-index: 100;
-  padding-top: 30px; */
-  /* display: none; 
+  z-index: 100;
+} 
+.modal-form.form-container{
+  width: 100%;
 } */
+
 .signup-container, .login-container{
-  padding-top: 80px;
+  padding-top: 8rem;
   width: 100vw;
   height: 100vh;
   background-color: #4d4847;
@@ -485,13 +496,13 @@ nav{
   margin: auto;
   border-radius: 15px;
   box-shadow: -10px -10px 20px rgba(255, 255, 255, 0.1), 15px 15px 15px rgba(0, 0, 0, 0.3);
-  padding: 40px 10px;
+  padding: 4rem 1rem;
   background-color: #4d4847;
 }
 .form-container h2{
   letter-spacing: 1.5px;
-  margin-bottom: 20px;
-  font-size: 30px;
+  margin-bottom: 2rem;
+  font-size: 3rem;
   color: #d4aa11;
 }
 .input-form{
@@ -503,12 +514,12 @@ nav{
 }
 .input-form input{
   text-align: left;
-  padding: 10px;
+  padding: 1rem;
   border: none;
-  background-size: 18px;
-  background-position: 8px;
+  background-size: 1.8rem;
+  background-position: 0.8rem;
   background-repeat: no-repeat;
-  padding-left: 35px;
+  padding-left: 3.5rem;
   border-radius: 8px;
   color: #4d4847;
 }
@@ -525,10 +536,9 @@ input.password{
   background-image: url('./icons/lock-solid.svg');
 }
 .submit-btn{
-  font-size: 16px;
   width: 40%;
-  padding: 8px 0;
-  margin: 10px auto;
+  padding: 0.8rem 0;
+  margin: 1rem auto;
   cursor: pointer;
   border-radius: 20px;
   border: none;
@@ -544,4 +554,87 @@ input.password{
 }
 .error-msg{
   color: red;
+}
+.hamburger{
+  display: none;
+}
+
+@media all and (min-width: 300px) and (max-width: 700px){
+  .site-name{
+    left: 2rem;
+  }
+  nav{
+    width: 5%;
+    top: 1.5rem;
+  }
+  .hamburger{
+    cursor: pointer;
+    display: block;
+    top: 1rem;
+  }
+  .hamburger .bar, .hamburger:after, .hamburger:before{
+    content: '';
+    display: block;
+    width: 2.7rem;
+    height: 0.3rem;
+    margin: 0.5rem auto;
+    color: #d0cfca;
+    background-color: #d0cfca;
+  }
+  .nav-menu{
+    position: fixed;
+    top: 4rem;
+    right: 1rem;
+    flex-direction: column;
+    padding: 2rem;
+    margin: 0.5rem 1rem;
+    width: auto;
+    background-color: #1f1f1f;
+    z-index: 10;
+    display: none;
+  }
+  .nav-menu a {
+    display: block;
+    margin: 1rem;
+  }
+  .search-section{
+    width: 60%;
+  }
+  .result-list{
+    width: 95%;
+  }
+  .movie-info{
+    width: 70%;
+    margin: 4rem auto 2rem auto;
+  }
+  .movie-poster{
+    width: 50vw;
+  }
+  .review-section{
+    width: 50%;
+  }
+  .movie-review{
+    height: 10vh;
+  }
+  .review-list{
+    width: 80%;
+  }
+
+  .collection-container{
+    width: 100%;
+  }
+  .movie-list{
+    width: 80%;
+  }
+  .parallax{
+    background-position: 0 50%;
+  }
+
+  .form-container{
+    margin-top: 20%;
+    width: 80%;
+  }
+  .input-form{
+    width: 80%;
+  } 
 }

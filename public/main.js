@@ -1,15 +1,21 @@
 // let loginLink = document.querySelector('.login-link')
-// let loginModal = document.querySelector('.login-form')
+// let loginModal = document.querySelector('.login-modal')
 // let wholePage = document.querySelector('.container')
-// loginLink.addEventListener('click', () => {
+// function showLoginModal() {
 //   loginModal.classList.remove('hide-content')
 //   wholePage.classList.add('is-blurred')
-// })
+// }
 // let closeLogin = document.querySelector('.close-login')
 // closeLogin.addEventListener('click', () => {
 //   loginModal.classList.add('hide-content')
 //   wholePage.classList.remove('is-blurred')
 // })
+
+let hamburger = document.querySelector('.hamburger')
+let navMenu = document.querySelector('.nav-menu')
+hamburger.addEventListener('click', () => {
+  navMenu.style.display = navMenu.style.display == 'flex' ? 'none' : 'flex'
+})
 
 let movieSearchField = document.querySelector('.movie-search-field')
 let moviePlot = document.querySelector('.plot')
@@ -94,6 +100,11 @@ async function getMovie(url){
     .then(res => res.json())
     .then(data => {
       console.log(data)
+      if(data.Response == 'False'){
+        movieTitle.innerText = "Movie not found!"
+        return
+      }
+      bookmarkBtn.classList.remove('hide-content')
       movieId = data.imdbID
       data.Poster == 'N/A' ? moviePoster.src = '/icons/no-image.png' : moviePoster.src = data.Poster
       movieTitle.innerText = data.Title
@@ -104,7 +115,6 @@ async function getMovie(url){
 
       checkPreviousBookmark(movieId)
       getPreviousReviews(movieId)
-      // checkLikedReviews(movieId)
     })
     .catch(error => console.error(error)) 
   }
@@ -274,7 +284,6 @@ async function deleteReview(){
       })
     })
     if(response.status == 401){
-      console.log("Unauthorized access.")
       window.location.href = '/login'
     } else if(response.status == 400){
       const data = await response.json()
@@ -307,6 +316,7 @@ async function likeReview(){
     })
     if(!response.ok){
       window.location.href = '/login'
+      // showLoginModal()
     } else {
       const data = await response.json()
       console.log(data)
