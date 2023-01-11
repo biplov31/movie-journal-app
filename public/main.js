@@ -235,7 +235,7 @@ const reviewBtn = document.querySelector('.review-submit-btn');
 // submiting data normally from HTML form would reload the page and our API data would disappear. with fetch we are able to submit data without refreshing the page
 reviewBtn.addEventListener('click', addReview)
 async function addReview(){
-  const review = document.querySelector('.movie-review').value
+  const review = document.querySelector('.movie-review-field').value
   const score = document.querySelector('#score').value
   if(review != ''){
     try{
