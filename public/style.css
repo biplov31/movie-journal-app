@@ -100,7 +100,7 @@ nav{
   position: absolute;
   left: 2%;
   top: 100%;
-  width: 100%;
+  width: 80%;
   max-height: 30rem;
   overflow-y: scroll;
   z-index: 10;
@@ -607,8 +607,9 @@ input.password{
     width: 60%;
   }
   .result-list{
-    width: 95%;
+    width: 80%;
   }
+  
   .movie-info{
     width: 90%;
     margin: 4rem auto 2rem auto;
@@ -616,7 +617,7 @@ input.password{
   .movie-poster{
     width: 60vw;
   }
-  .movie-info.plot{
+  .movie-info .plot{
     width: 90%;
   }
   .review-section{
