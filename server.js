@@ -23,7 +23,7 @@ app.use(logger('dev'))
 
 // this middleware creates a req.session in every request body. we can save req.session that would be persistent throught all of the request-response cycle with a particular user, req.session.id matches the id in the cookie
 app.use(session({  // by default our mongodb collection name is going to be 'sessions'
-  secret: 'some key that signs cookie',
+  secret: process.env.SESSION_SECRET,
   resave: false,  // for every request from the same user we don't want to create a new session
   saveUninitialized: false,
   store: MongoStore.create({mongoUrl: process.env.DB_STRING}), // storing our session info in our mongo database
