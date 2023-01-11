@@ -31,7 +31,7 @@ module.exports = {
   getWatchList: async (req, res) => {
     try{
       const bookmarkedMovies = await Bookmark.find({users: req.session.currentUser})
-      res.render('watchList.ejs', {movies: bookmarkedMovies})
+      res.render('watchlist.ejs', {movies: bookmarkedMovies})
     } catch(err) {res.json({message: err})}
   }
 }

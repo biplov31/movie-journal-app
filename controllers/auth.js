@@ -2,7 +2,7 @@ const User = require('../models/User')
 const bcrypt = require('bcryptjs')
 
 exports.getSignup = async (req, res) => {
-  res.render('signUp.ejs')
+  res.render('signup.ejs')
 }
 
 exports.postSignup = async (req, res, next) => {

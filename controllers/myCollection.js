@@ -11,7 +11,7 @@ module.exports = {
         movie.score = reviewData.score
         movie.review = reviewData.review
       }
-      res.render('myCollection.ejs', {movies: watchedMovies})
+      res.render('mycollection.ejs', {movies: watchedMovies})
           
     } catch(err) {res.json({message: err})}
   }
