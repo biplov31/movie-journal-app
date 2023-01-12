@@ -138,6 +138,8 @@ async function getPreviousReviews(movieId) {
 
 // updating new review to the DOM without using the database or reloading the page
 async function displayReviews(reviews, user){
+  const reviewcollection = document.querySelector('.review-collection')
+  reviewcollection.classList.remove('hide-content')
   const reviewList = document.querySelector('.review-list')
   reviewList.innerHTML = '' // so the reviews from earlier searches don't stay in the DOM
   if(reviews.length == 0){  
@@ -327,3 +329,53 @@ async function likeReview(){
   }
 }
 
+async function getTopGenre(){
+  const response = await fetch('reviews/getTopGenre', {
+    method: 'get', 
+    headers: {'Content-Type': 'application/json'}
+  })
+  if(!response.ok){
+    getRecommendations('undefined', response.status)
+    return
+  }
+  const topGenre = await response.json()
+  console.log(topGenre)
+  let genres = {'action':28, 'adventure':12, 'animation':16, 'comedy':35, 'crime':80, 'drama':18, 'fantasy':14, 'horror':27, 'mystery':9648, 'romance':10749, 'sci-fi':878, 'thriller':53, 'war':10752}
+  let requiredGenre = Object.keys(genres).find(key => key === topGenre.toLowerCase())
+  let topGenreId = genres[requiredGenre]
+  getRecommendations(topGenreId)
+}
+
+getTopGenre()
+
+async function getRecommendations(genreId, status){
+  let response
+  let page = Math.floor((Math.random() * 500) + 1);
+  if(genreId === 'undefined' || status == 401){
+    response = await fetch('https://api.themoviedb.org/3/trending/movie/week?api_key=2732cfcce0a17dae7c833ce86f4238e7')
+  } else {
+    response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=2732cfcce0a17dae7c833ce86f4238e7&original_language=en&sort_by=popularity.desc&adult=false&page=${page}&with_genres=${genreId}`)
+  }  
+  const data = await response.json()
+  console.log(data)
+  let movies = data.results
+  let recommendedMovies = document.querySelector('.recommended-movies')
+  let mainPath = 'https://image.tmdb.org/t/p/original/'
+
+  let i = 0
+  let r = Math.floor((Math.random() * 15));
+  while(i<4 && r<20){
+    let movieCard = document.createElement('div')
+    movieCard.classList.add('movie-card')
+    if(movies[r].poster_path == null){
+      movieCard.innerHTML = `<img class="movie-img src="/icons/no-image.png">`
+      + `<div class="movie-name">${movies[r].title}</div>`
+    } else {
+      movieCard.innerHTML = `<img class="movie-img" src="${mainPath + movies[r].poster_path}" alt="">`
+      + `<div class="movie-name">${movies[r].title}</div>`
+    }
+    recommendedMovies.appendChild(movieCard)
+    i++
+    r++
+  }
+}

@@ -11,7 +11,6 @@
 <body>
    
   <div class="login-modal hide-content">
-    <!-- <h1 class="site-name"><a href="/">Movie<span>Night</span></a></h1> -->
     <span class="close-login">&times;</span>
     <div class="modal-form form-container">
       <h2>LOG IN</h2>
@@ -30,65 +29,83 @@
   </div>
 
   <div class="container">
+    <header>
     <h1 class="site-name"><a href="/">Movie<span>Night</span></a></h1>
-    <nav>
-      <div class="nav-menu">
-        <%if (!locals.session || locals.session.isAuth != true){ %>
-          <span><a href="/signup">Sign Up</a></span>
-          <span><a href="/login">Login</a></span>
-        <% } else { %>
-          <span id="current-user"><%= locals.user.username %></span>
-          <span><a href="/logout">Log Out</a></span>
-        <% } %>  
-        <span><a href="/watchlist" target="_blank">Watch List</a></span>
-        <span><a href="/mycollection" target="_blank">My Collection</a></span>
-      </div>    
-      <div class="hamburger">
-        <span class="bar"></span>
+      <nav>
+        <div class="nav-menu">
+          <%if (!locals.session || locals.session.isAuth != true){ %>
+            <span><a href="/signup">Sign Up</a></span>
+            <span><a href="/login">Login</a></span>
+          <% } else { %>
+            <span id="current-user"><%= locals.user.username %></span>
+            <span><a href="/logout">Log Out</a></span>
+          <% } %>  
+          <span><a href="/watchlist" target="_blank">Watch List</a></span>
+          <span><a href="/mycollection" target="_blank">My Collection</a></span>
+        </div>    
+        <div class="hamburger">
+          <span class="bar"></span>
+        </div>
+      </nav>
+    </header>  
+
+    <main>
+      <div class="search-section">
+          <p>What did you watch today?</p>
+          <input type="text" name="movie" class="movie-search-field" placeholder="Enter the movie name...">
+          <button type="button" class="search-btn">Search</button>
+
+          <div class="result-list"></div>
+      </div>  
+
+      <div class="movie-info">
+        <i class="fas fa-bookmark hide-content"></i>
+        <div class="movie-poster"><img src="/images/netflix-poster.jpg" alt="" class="poster"></div>  <!-- we are already using /public as static file in Express so no need to write it --> 
+        <h2 class="title"></h2>
+        <h5 class="genre"></h5>
+        <h5 class="actors"></h5>
+        <p class="plot hide-content"></p>
       </div>
-    </nav>
 
+      <div class="review-section">
+        <form action="/addReview" method="POST" class="review-form">
+          <span class="movie-id"></span>
+          <div class="slider">
+            <p>Rate your experience.</p>
+            <input type="range" id="score" name="score" min="0" max="10" step="0.1" value="0" oninput="rangeValue.innerText = this.value">
+            <span id="rangeValue">0</span>
+          </div>
+          <textarea placeholder="What did you think of the movie?" name="review" class="movie-review-field"></textarea>
+          <button type="button" class="review-submit-btn">Submit</button>
+          <div class="success-popup">
+            <span>Your review has been submitted.</span>
+          </div>
+        </form>  
+      </div>
 
-    <div class="search-section">
-        <p>What did you watch today?</p>
-        <input type="text" name="movie" class="movie-search-field" placeholder="Enter the movie name...">
-        <button type="button" class="search-btn">Search</button>
+      <div class="review-collection hide-content">
+        <span>User Reviews</span>
+        <ul class="review-list"> 
+      
+        </ul>
+      </div>
 
-        <div class="result-list">
+      <div class="recommendations">
+        <span class="carousel-text">Movies you may like:</span>
+        <div class="recommended-movies">
+          <!-- <div class="movie-card">
+            <img class="movie-img" src="/images/netflix-poster.jpg" alt="">
+            <div class="movie-name"></div>
+          </div> -->
+              
         </div>
-    </div>  
-
-    <div class="movie-info">
-      <i class="fas fa-bookmark hide-content"></i>
-      <div class="movie-poster"><img src="/images/netflix-poster.jpg" alt="" class="poster"></div>  <!-- we are already using /public as static file in Express so no need to write it --> 
-      <h2 class="title"></h2>
-      <h5 class="genre"></h5>
-      <h5 class="actors"></h5>
-      <p class="plot hide-content"></p>
-    </div>
-
-    <div class="review-section">
-      <form action="/addReview" method="POST" class="review-form">
-        <span class="movie-id"></span>
-        <div class="slider">
-          <p>Rate your experience.</p>
-          <input type="range" id="score" name="score" min="0" max="10" step="0.1" value="0" oninput="rangeValue.innerText = this.value">
-          <span id="rangeValue">0</span>
-        </div>
-        <textarea placeholder="What did you think of the movie?" name="review" class="movie-review-field"></textarea>
-        <button type="button" class="review-submit-btn">Submit</button>
-        <div class="success-popup">
-          <span>Your review has been submitted.</span>
-        </div>
-      </form>  
-    </div>
-
-    <div class="review-collection">
-      <span>User Reviews</span>
-      <ul class="review-list"> 
+      </div>
+    </main>
     
-      </ul>
-    </div>
+    <footer>
+      <span class="site-name-footer"><a href="/">Movie<span>Night</span></a></span>
+      <span>2023</span>
+    </footer>
   </div> 
   
 

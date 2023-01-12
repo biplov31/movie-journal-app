@@ -8,7 +8,6 @@ html{
   font-size: 62.5%;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   color: gainsboro;
-  padding-bottom: 4rem;
   height: 100%;
 }
 body{
@@ -20,7 +19,7 @@ a{
   color: gainsboro;
 }
 .container{
-  padding-bottom: 5rem;
+  padding-bottom: 3rem;
   background-color:#4d4847;
   /* min-height: 100vh; */
   max-width: 100vw;
@@ -37,6 +36,12 @@ a{
 }
 .site-name span{
   color:#919093;
+}
+.site-name:hover{
+  color:#919093;
+}
+.site-name span:hover{
+  color: gainsboro;
 }
 #current-user{
   color: #d4aa11;
@@ -73,7 +78,7 @@ nav{
   /* padding: 0 50px; */
 }
 .movie-search-field{
-  margin: 1rem 1rem 0 0;
+  margin: 1rem 0.3rem 0 0;
   padding: 0.7rem;
   width: 70%;
   border-radius: 6px;
@@ -271,9 +276,9 @@ nav{
 }
 .review-submit-btn{
   width: 25%;
-  padding: 0.8rem 0;
-  font-size: 1.7rem;
-  border-radius: 1.5rem;
+  padding: 0.7rem 0;
+  font-size: 1.6rem;
+  border-radius: 1.6rem;
   border: none;
   cursor: pointer;
   margin: 0 auto 4rem auto;
@@ -347,7 +352,7 @@ nav{
   cursor: pointer;
 }
 .fa-thumbs-up{
-  color: rgb(180, 197, 243)
+  color: rgba(180, 197, 243, 0.7)
 }
 .liked{
   color: rgb(72, 119, 250);
@@ -356,6 +361,54 @@ nav{
   color: rgb(166, 52, 52);
 }
 
+.recommendations{
+  margin-top: 4rem;
+  text-align: center;
+  background-color: rgba(158, 182, 182, 0.3);
+  padding: 2rem 0 3rem 0;
+  border-top: 3px solid rgb(158, 182, 182);
+  border-bottom: 3px solid rgb(158, 182, 182);
+}
+.carousel-text{
+  display: block;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  font-size: 2.2rem;
+}
+.recommended-movies{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+.movie-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 18%;
+}
+.movie-img{
+  max-width: 100%;
+  aspect-ratio: 1/1.1;
+  border-radius: 10px 10px 0 0;
+}
+.movie-name{
+  flex-grow: 1;
+  font-size: 1.6rem;
+  line-height: 1;
+  background-color: black;
+  color: aliceblue;
+  padding: 5px 0;
+  max-width: 100%;
+}
+footer{
+  margin-top: 8rem;
+  text-align: center;
+}
+.site-name-footer{
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
 
 
 /* My Collection */
@@ -647,4 +700,10 @@ input.password{
   .input-form{
     width: 80%;
   } 
+  .recommended-movies .movie-img{
+    width: 10rem;
+  }
+  .movie-name{
+    font-size: 1.3rem;
+  }
 }
