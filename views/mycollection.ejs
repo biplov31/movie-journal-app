@@ -10,27 +10,29 @@
 <body>
   <div class="collection-container">
     <div class="parallax header-content">
-      <div class="par-text"><span>My Watchlist</span></div>
+      <div class="par-text"><span>Movie Collection</span></div>
     </div>
 
     <div class="main-content">
       <div class="main-content-bg"></div>
       
-      <div class="watch-list movie-list">
+      <div class="movie-list">
         <% if(movies.length == 0){ %>
           <div class="empty-text"><h2>There are no movies here.</h2></div>
         <% } %>  
         <% for(let i=0; i<movies.length; i++){ %>
-          <div class="watchlisted-movie listed-movie">
-            <img class="poster" src="<%= movies[i].posterLink%>" alt="">
+          <div class="listed-movie">
+            <img class="poster" src="<%= movies[i].posterLink %>" alt="POSTER">
             <div class="listed-movie-content">
               <h3 class="title"><%= movies[i].movieTitle %></h3>
+              <span class="score"><%= movies[i].score %></span>
               <span class="genre"><%= movies[i].genre %></span>
-              <p><%= movies[i].plot%></p>
+              <p>"<%= movies[i].review%>"</p>
             </div>  
           </div>
         <% } %>
-      </div>
+      </div> 
+
     </div>
 
     <div class="parallax footer-content">
