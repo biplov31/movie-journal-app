@@ -39,6 +39,36 @@ module.exports = {
       await Review.deleteOne({_id: req.body.reviewToDel, user: req.session.currentUser})
       res.json('Delete successful.')
     }
+  },
+
+  getTopGenre: async (req, res) => {
+    if(!req.session || !req.session.currentUser){
+      return res.sendStatus(401)
+    }
+    const genres = await Movie.find({users: req.session.currentUser}, {'genre':1, '_id': 0})
+    // let genreArr = []
+    // for(const{genre: g} of genres){
+    //   genreArr.push(g.trim().split(","))
+    // }
+    
+    let genreArr = (genres.map(({genre}) => {  // object destructuring with map
+      return genre.replaceAll(' ', '').split(',')
+    })).flat()
+    let topGenre = findTopGenre(genreArr)
+
+    function findTopGenre(arr){
+      let count = {};
+      let maxEle = arr[0], maxCount = 1;
+      for(let i = 0; i < arr.length; i++) {
+        count[arr[i]] = (count[arr[i]] || 0) + 1;
+        if(count[arr[i]] > maxCount) {
+          maxEle = arr[i];
+          maxCount = count[arr[i]];
+        }
+      }
+      return maxEle
+    }
+    res.send(JSON.stringify(topGenre))
   }
 
 }  

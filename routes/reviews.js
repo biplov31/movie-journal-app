@@ -11,4 +11,6 @@ router.put('/likeReview', protectReview, reviewsController.likeReview)
 
 router.delete('/deleteReview', protectReview, reviewsController.deleteReview)
 
+router.get('/getTopGenre', reviewsController.getTopGenre)
+
 module.exports = router
