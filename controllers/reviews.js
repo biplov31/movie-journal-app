@@ -54,21 +54,33 @@ module.exports = {
     let genreArr = (genres.map(({genre}) => {  // object destructuring with map
       return genre.replaceAll(' ', '').split(',')
     })).flat()
-    let topGenre = findTopGenre(genreArr)
+    let topGenres = findTopGenre(genreArr)
 
     function findTopGenre(arr){
-      let count = {};
-      let maxEle = arr[0], maxCount = 1;
-      for(let i = 0; i < arr.length; i++) {
-        count[arr[i]] = (count[arr[i]] || 0) + 1;
-        if(count[arr[i]] > maxCount) {
-          maxEle = arr[i];
-          maxCount = count[arr[i]];
+      // let count = {};
+      // let maxEle = arr[0], maxCount = 1;
+      // for(let i = 0; i < arr.length; i++) {
+      //   count[arr[i]] = (count[arr[i]] || 0) + 1;
+      //   if(count[arr[i]] > maxCount) {
+      //     maxEle = arr[i];
+      //     maxCount = count[arr[i]];
+      //   }
+      // }
+      // return maxEle
+
+      const count = {};
+      for(const element of arr){
+        if(count[element]){
+          count[element] += 1;
+        } else {
+          count[element] = 1;
         }
       }
-      return maxEle
+      let sortedGenres = Object.entries(count).sort((a, b) => b[1] - a[1])
+      // const [firstGenre, secondGenre] = sortedGenres.slice(0, 2).map(([key]) => key)
+      return sortedGenres.slice(0, 2).map(entry => entry[0])
     }
-    res.send(JSON.stringify(topGenre))
+    res.send(JSON.stringify(topGenres))
   }
 
 }  

@@ -18,8 +18,9 @@ hamburger.addEventListener('click', () => {
 })
 
 let movieSearchField = document.querySelector('.movie-search-field')
+let movieContainer = document.querySelector('.movie-info')
 let moviePlot = document.querySelector('.plot')
-let movieId = document.querySelector('.movie-id').value
+let movieId = document.querySelector('.movie-id').innerText
 let movieGenre = document.querySelector('.genre')
 let movieTitle = document.querySelector('.title')
 let moviePoster = document.querySelector('.poster')
@@ -38,10 +39,10 @@ movieSearchField.addEventListener('input', async function(){
 
   try{
     searchResults.innerHTML = ''
-    const response = await fetch(`https://www.omdbapi.com/?s=${query}&apikey=75dd0b86`)
+    const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=2732cfcce0a17dae7c833ce86f4238e7&query=${query}`)
     const data = await response.json()
-    const movies = data.Search
-    if(!movies || data.Response == "False") return
+    const movies = data.results
+    if(!movies) return
     displayMovieList(movies)
 
   } catch (error) {
@@ -52,18 +53,18 @@ movieSearchField.addEventListener('input', async function(){
 function displayMovieList(movies){
   movies.forEach(movie => {
     let resultListItem = document.createElement('div')
-    resultListItem.dataset.id = movie.imdbID
+    resultListItem.dataset.id = movie.id
     resultListItem.classList.add('result-list-item')
-    if(movie.Poster != "N/A"){
-      movieThumb = movie.Poster
+    if(movie.poster_path != "N/A"){
+      movieThumb = `https://image.tmdb.org/t/p/w92/${movie.poster_path}`
     } else {
       movieThumb = '/icons/no-image.png'
     }
     resultListItem.innerHTML = `
     <img src="${movieThumb}" alt="">
     <div class="result-item-info">
-      <h4>${movie.Title}</h4>
-      <span>${movie.Year}</span>
+      <h4>${movie.title}</h4>
+      <span>${movie.release_date.split('-')[0]}</span>
     </div>`
     searchResults.appendChild(resultListItem)      
   })
@@ -73,8 +74,7 @@ function displayMovieList(movies){
   searchedMovies.forEach(movie => {
     movie.addEventListener('click', async() => {
       searchResults.classList.add('hide-content')
-      const urlId = `https://www.omdbapi.com/?i=${movie.dataset.id}&apikey=75dd0b86`
-      getMovie(urlId)
+      getMovie(movie.dataset.id)
     })
   })
 }
@@ -84,9 +84,10 @@ let searchBtn = document.querySelector('.search-btn')
 searchBtn.addEventListener('click',function() {
   searchResults.classList.add('hide-content')
   const enteredMovie = movieSearchField.value
-  const finalName = enteredMovie.split(' ').join('+') 
-  urlTitle = `https://www.omdbapi.com/?t=${finalName}&apikey=75dd0b86`
-  getMovie(urlTitle)  
+  const finalName = enteredMovie.split(' ').join('%20') 
+  // urlTitle = `https://www.omdbapi.com/?t=${finalName}&apikey=75dd0b86`
+  urlTitle = `https://api.themoviedb.org/3/search/movie?api_key=2732cfcce0a17dae7c833ce86f4238e7&query=${finalName}&append_to_response=genres`
+  fetchMovies(urlTitle)  
 })
 movieSearchField.addEventListener('keypress', (event) => {
   if(event.key == "Enter"){
@@ -95,28 +96,56 @@ movieSearchField.addEventListener('keypress', (event) => {
   }
 })
 
-async function getMovie(url){ 
-  await fetch(url)
-    .then(res => res.json())
-    .then(data => {
-      console.log(data)
-      if(data.Response == 'False'){
-        movieTitle.innerText = "Movie not found!"
-        return
-      }
+async function fetchMovies(url) {
+  const movies = await fetch(url)
+  const moviesData = await movies.json()
+  if(moviesData.total_results === 0){
+    movieTitle.innerText = "Movie not found!"
+    return
+  }
+  getMovie(moviesData.results[0].id)
+}
+
+// fetch details for a particular movie based on an id
+async function getMovie(tmdbId){ 
+    try {      
+      const movie = await fetch(`https://api.themoviedb.org/3/movie/${tmdbId}?api_key=2732cfcce0a17dae7c833ce86f4238e7&append_to_response=credits,images&include_image_language=null,en`)
+      const data = await movie.json()
       bookmarkBtn.classList.remove('hide-content')
-      movieId = data.imdbID
-      data.Poster == 'N/A' ? moviePoster.src = '/icons/no-image.png' : moviePoster.src = data.Poster
-      movieTitle.innerText = data.Title
-      movieGenre.innerText = data.Genre
-      document.querySelector('.actors').innerText = 'Starring: ' + data.Actors
+      movieId = data.imdb_id
+      console.log(data)
+      data.poster_path == 'N/A' ? moviePoster.src = '/icons/no-image.png' : moviePoster.src = `https://image.tmdb.org/t/p/w500${data.poster_path}`
+      let intervalId
+      let additionalImages
+      movieContainer.addEventListener('mouseover', changePosters) 
+      function changePosters() {
+        additionalImages = data.images.posters
+        intervalId = setInterval(() => {
+          console.log(data.original_title);
+          moviePoster.src = `https://image.tmdb.org/t/p/w500${additionalImages[Math.floor(Math.random() * additionalImages.length)].file_path}`
+        }, 1500)
+      }
+      movieContainer.addEventListener('mouseout', () => {
+        clearInterval(intervalId)
+        additionalImages = null
+        moviePoster.src = `https://image.tmdb.org/t/p/w500${data.poster_path}`
+        movieContainer.removeEventListener('mouseover', changePosters) // if we don't remove the eventlistener data from previous fetches persist in our setInterval
+      })
+      
+      movieTitle.innerText = data.original_title
+      
+      let genreNames = data.genres.map(genre => genre['name'])
+      movieGenre.innerText = genreNames.join(', ')
+
+      document.querySelector('.actors').innerText = 'Starring: ' + data.credits.cast.slice(0, 4).map(actor => actor.original_name).join(', ')
       moviePlot.classList.remove('hide-content')
-      moviePlot.innerText = data.Plot
+      moviePlot.innerText = data.overview
 
       checkPreviousBookmark(movieId)
       getPreviousReviews(movieId)
-    })
-    .catch(error => console.error(error)) 
+    } catch (error) {
+      console.error(error)
+    }
   }
   
 // sending the Imdb Id of a movie to our server so we can display the reviews made for that particular movie after grabbing it from the database. We cannot use the GET method here because it doesn't have a body (we could use query parameter though), but POST method has a body through which we can send data to the server
@@ -178,13 +207,13 @@ async function displayReviews(reviews, user){
 }
 
 // if the movie has already been bookmarked before the bookmark button should be active
-async function checkPreviousBookmark(movieId) {
+async function checkPreviousBookmark(movieID) {
   try{
     const response = await fetch('watchList/checkBookmark', {
       method: 'post',
       headers: {'Content-Type' : 'application/json'},
       body: JSON.stringify({
-        'movieId': movieId
+        'movieId': movieID
       })
     })
     const movieInfo = await response.json()
@@ -239,7 +268,8 @@ reviewBtn.addEventListener('click', addReview)
 async function addReview(){
   const review = document.querySelector('.movie-review-field').value
   const score = document.querySelector('#score').value
-  if(review != ''){
+  if(review || score){
+    
     try{
       const response = await fetch('reviews/addReview', {
         method: 'post',
@@ -255,8 +285,10 @@ async function addReview(){
           
         })
       })
+      if(!response.ok){
+        return window.location.href = '/login'
+      } 
       const reviewsMade = await response.json()
-      console.log(reviewsMade)
 
       let popUp = document.querySelector('.success-popup')
       popUp.classList.add('show-popup')
@@ -267,7 +299,7 @@ async function addReview(){
       document.querySelector('#rangeValue').innerText = 0
 
     } catch(err) {
-        console.log(err)
+      console.error(err)
     }
   }  
 }  
@@ -338,42 +370,50 @@ async function getTopGenre(){
     getRecommendations('undefined', response.status)
     return
   }
-  const topGenre = await response.json()
-  console.log(topGenre)
+  let topGenres = await response.json()
   let genres = {'action':28, 'adventure':12, 'animation':16, 'comedy':35, 'crime':80, 'drama':18, 'fantasy':14, 'horror':27, 'mystery':9648, 'romance':10749, 'sci-fi':878, 'thriller':53, 'war':10752}
-  let requiredGenre = Object.keys(genres).find(key => key === topGenre.toLowerCase())
-  let topGenreId = genres[requiredGenre]
-  getRecommendations(topGenreId)
+  // let genreIds = topGenres.map(genre => {
+  //   let requiredGenre = Object.keys(genres).find(key => key === genre.toLowerCase())
+  //   return genres[requiredGenre]
+  // })
+  topGenres = topGenres.map(genre => genre.toLowerCase())
+  let genreIds = topGenres.map(genre => genres[genre])
+  // let requiredGenre = Object.keys(genres).find(key => key === topGenres.toLowerCase())
+  // let topGenreId = genres[requiredGenre]
+  getRecommendations(genreIds)
 }
 
 getTopGenre()
 
-async function getRecommendations(genreId, status){
+async function getRecommendations(genreIds, status){
   let response
   let page = Math.floor((Math.random() * 500) + 1);
-  if(genreId === 'undefined' || status == 401){
+  if(genreIds === 'undefined' || status == 401){
     response = await fetch('https://api.themoviedb.org/3/trending/movie/week?api_key=2732cfcce0a17dae7c833ce86f4238e7')
   } else {
-    response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=2732cfcce0a17dae7c833ce86f4238e7&original_language=en&sort_by=popularity.desc&adult=false&page=${page}&with_genres=${genreId}`)
+    response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=2732cfcce0a17dae7c833ce86f4238e7&original_language=en&sort_by=popularity.desc&adult=false&page=${page}&with_genres=${genreIds.join('|')}`)
   }  
   const data = await response.json()
-  console.log(data)
-  let movies = data.results
+  movies = data.results
   let recommendedMovies = document.querySelector('.recommended-movies')
-  let mainPath = 'https://image.tmdb.org/t/p/original/'
 
   let i = 0
   let r = Math.floor((Math.random() * 15));
   while(i<4 && r<20){
     let movieCard = document.createElement('div')
+    movieCard.dataset.id = movies[r].id
     movieCard.classList.add('movie-card')
     if(movies[r].poster_path == null){
       movieCard.innerHTML = `<img class="movie-img src="/icons/no-image.png">`
       + `<div class="movie-name">${movies[r].title}</div>`
     } else {
-      movieCard.innerHTML = `<img class="movie-img" src="${mainPath + movies[r].poster_path}" alt="">`
+      movieCard.innerHTML = `<img class="movie-img" src="https://image.tmdb.org/t/p/w342/${movies[r].poster_path}" alt="">`
       + `<div class="movie-name">${movies[r].title}</div>`
     }
+    movieCard.addEventListener('click', () => {
+      getMovie(movieCard.dataset.id) 
+      movieContainer.scrollIntoView({ behavior: "smooth" })
+    })
     recommendedMovies.appendChild(movieCard)
     i++
     r++

@@ -30,7 +30,7 @@
 
   <div class="container">
     <header>
-    <h1 class="site-name"><a href="/">Movie<span>Night</span></a></h1>
+      <a href="/"><h1 class="site-name">Movie<span>Night</span></h1></a>
       <nav>
         <div class="nav-menu">
           <%if (!locals.session || locals.session.isAuth != true){ %>
@@ -59,17 +59,17 @@
       </div>  
 
       <div class="movie-info">
-        <i class="fas fa-bookmark hide-content"></i>
+        <i class="fas fa-bookmark hide-content" title="Add to watch list"></i>
+        <span class="movie-id"></span>
         <div class="movie-poster"><img src="/images/netflix-poster.jpg" alt="" class="poster"></div>  <!-- we are already using /public as static file in Express so no need to write it --> 
         <h2 class="title"></h2>
-        <h5 class="genre"></h5>
-        <h5 class="actors"></h5>
+        <span class="genre"></span>
+        <span class="actors"></span>
         <p class="plot hide-content"></p>
       </div>
 
       <div class="review-section">
         <form action="/addReview" method="POST" class="review-form">
-          <span class="movie-id"></span>
           <div class="slider">
             <p>Rate your experience.</p>
             <input type="range" id="score" name="score" min="0" max="10" step="0.1" value="0" oninput="rangeValue.innerText = this.value">
