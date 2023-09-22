@@ -6,8 +6,9 @@
 }
 :root {
   --primary-color: #4d4847;
-  --secondary-color: #d4aa11;
+  --secondary-color: #d9b121;
   --white-text: gainsboro;
+  --dark-text: #222222;
 }
 html{
   font-size: 62.5%;
@@ -23,6 +24,9 @@ body{
 a{
   text-decoration: none;
   color: var(--white-text);
+}
+input, button {
+  font-family: inherit;
 }
 .container{
   padding: 2rem 0;
@@ -89,32 +93,41 @@ header {
 .search-section{
   margin-top: 1rem;
   display: inline-block;
-  width: 25%;
+  width: 35%;
   position: relative;
   /* padding: 0 50px; */
 }
+.search-field-container {
+  margin: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
 .movie-search-field{
-  margin: 1rem 0.3rem 0 0;
-  padding: 0.7rem;
-  width: 70%;
+  background-color: #eeeeee;
+  padding: .9rem;
+  width: 75%;
   border-radius: 6px;
   border: none;
   text-align: left;
-  font-size: 1.4rem;
+  font-size: 1.5rem;
 }
 .search-btn{
   /* width: 30%; */
-  padding: 0.6rem 0.7rem;
+  padding: 0.7rem 1.2rem;
+  font-weight: 600;
+  font-size: 1.7rem;
+  color: var(--primary-color);
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  outline: #97ace6 1.5px solid;
-  transition: outline 0.1s ease-out, transform 0.1s ease-in;
+  outline: #ffc800 1.5px solid;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 .search-btn:hover{
-  background-color: #97ace6;
-  transform: scale(1.1);
-  outline: none;
+  background-color: var(--secondary-color);
+  transform: translateY(-.3rem);
 }
 .result-list{
   margin-top: 0.5rem;
@@ -155,9 +168,9 @@ header {
 	box-shadow: 0 25px 23px rgba(0, 0, 0, 0.15);
 	border: 1.5px solid rgba(255, 255, 255, 0.06);
   /* box-shadow: 1px 2px 4px 2px rgba(0, 0, 0, 0.5); */
-  padding: 1.5rem 0.5rem;
-  width: 55%;
-  margin: 2rem auto 0 auto;
+  padding: 2.5rem 0.5rem;
+  width: 60%;
+  margin: 2.5rem auto 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -226,7 +239,7 @@ header {
 }
 .plot::before{
   top: -0.5rem;
-  left: -0.8rem;
+  left: -1.2rem;
 }
 .plot::after{
   bottom: 0;
@@ -235,9 +248,10 @@ header {
 }
 .review-section{
   margin-inline: auto;
+  margin-bottom: 5rem;
   display: flex;
   flex-direction: column;
-  width: 35vw;
+  width: 35dvw;
   align-items: center;
   justify-content: center;
 }
@@ -248,7 +262,7 @@ header {
   display: none;
 } 
 .slider{
-  margin: 5rem auto 1rem auto;
+  margin: 4rem auto 1.5rem auto;
   width: 70%;
   padding: 1.5rem;
   border-radius: 2rem;
@@ -285,6 +299,7 @@ header {
   border: 2px solid transparent;
   border-radius: 4px;
   background-color: #f8f8f8;
+  font-family: inherit;
   font-size: 1.6rem;
   text-align: left;
   line-height: 1.2;
@@ -296,16 +311,21 @@ header {
 }
 .review-submit-btn{
   width: 25%;
-  padding: 0.7rem 0;
-  font-size: 1.6rem;
-  border-radius: 1.6rem;
+  padding: .8rem 1.2rem;
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-size: 1.8rem;
+  font-weight: 600;
+  border-radius: 2rem;
   border: none;
   cursor: pointer;
-  margin: 0 auto 4rem auto;
+  margin: 0 auto;
   transition: background-color 0.3s ease;
 }
 .review-submit-btn:hover{
-  background-color: var(--secondary-color);
+  background-color: rgba(255, 200, 0, 0.2);
+  outline: var(--secondary-color) 2px solid;
+  color: var(--secondary-color);
 }
 .success-popup{
   background-color: rgba(75, 181, 67, 1);
@@ -332,16 +352,15 @@ header {
   border-radius: 10px;
 }
 .review-collection{
-  margin: 3rem;
-  margin-bottom: 5rem;
+  margin-block: 8rem;
 }
-.review-collection>span{
-  font-size: 2.3rem;
-  font-weight: 600;
+.review-collection>h3{
+  font-size: 2.4rem;
+  font-weight: 700;
   display: block;
 }
 .review-list{
-  margin: 1.5rem auto 5rem auto;
+  margin: 1.5rem auto;
   outline: 1px solid #171717;
   width: 60%;
   max-height: 35rem;
@@ -363,9 +382,10 @@ header {
 }
 .review .score{
   background-color: #d0cfca;
+  border-radius: 4px;
   color: #444242;
   margin: 6px;
-  padding: 1.5px;
+  padding: 0 2.5px;
 }
 .fa{
   margin: 0 3px;
@@ -378,11 +398,11 @@ header {
   color: rgb(72, 119, 250);
 }
 .fa-trash{
-  color: rgb(166, 52, 52);
+  color: rgb(219, 68, 68);
 }
 
 .recommendations{
-  margin-top: 4rem;
+  margin-top: 8rem;
   text-align: center;
   background-color: rgba(158, 182, 182, 0.3);
   padding: 2rem 0 3rem 0;
@@ -393,7 +413,7 @@ header {
   display: block;
   font-weight: 700;
   margin-bottom: 2rem;
-  font-size: 2.2rem;
+  font-size: 2.4rem;
 }
 .recommended-movies{
   display: flex;
@@ -501,11 +521,11 @@ footer{
   font-size: 2rem;
 }
 .movie-list{
-  width: 50%;
+  width: 60%;
 }
 .listed-movie{
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   padding: 1.5rem;
   background-color: rgba(85, 85, 82, 0.94);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
@@ -528,8 +548,8 @@ footer{
   color: #171717;
   width: fit-content;
   margin: 0 auto;
-  padding: 0 2px;
-  background-color: rgba(212, 170, 17, 0.7);
+  padding: 0 4px;
+  background-color: var(--secondary-color);
   line-height: 0.9;
 }
 .listed-movie-content p{
@@ -566,17 +586,18 @@ footer{
 } */
 
 .signup-container, .login-container{
-  padding-top: 3rem;
-  width: 100vw;
-  height: 100vh;
+  padding-block: 2rem;
+  margin-bottom: 3rem;
+  width: 100dvw;
+  min-height: 100dvh;
   background-color: var(--primary-color);
 }
 .form-container{
   width: 45%;
-  margin: auto;
+  margin: 0 auto;
   border-radius: 15px;
   box-shadow: -10px -10px 20px rgba(255, 255, 255, 0.1), 15px 15px 15px rgba(0, 0, 0, 0.3);
-  padding: 4rem 1rem;
+  padding: 3rem 1rem;
   background-color: var(--primary-color);
 }
 .form-container h2{
@@ -594,7 +615,8 @@ footer{
 }
 .input-form input{
   text-align: left;
-  padding: 1rem;
+  padding: .8rem;
+  font-size: 1.6rem;
   border: none;
   background-size: 1.8rem;
   background-position: 0.8rem;
@@ -618,17 +640,21 @@ input.password{
 }
 .submit-btn{
   width: 40%;
+  font-size: 1.6rem;
+  font-weight: 600;
   padding: 0.8rem 0;
   margin: 1rem auto;
   cursor: pointer;
   border-radius: 20px;
   border: none;
-  background-color: rgba(212, 170, 17, 0.7);
-  color: #ebe3e3;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  transition: background-color 0.3s ease;
 }
 .submit-btn:hover{
-  outline: #97ace6 3px solid;
-  background-color: var(--secondary-color);
+  background-color: rgba(255, 200, 0, 0.2);
+  outline: var(--secondary-color) 2px solid;
+  color: var(--secondary-color);
 }
 .signup-link, .login-link{
   color: var(--secondary-color);
@@ -680,9 +706,6 @@ input.password{
 .article {
   padding: 1.5rem 0.5rem;
   background-color: rgba(138, 133, 132, 0.2);
-}
-.article-container {
-  /* height: 100%; */
 }
 .article-container article {
   width: 60%;
@@ -761,7 +784,7 @@ input.password{
     width: 100%;
   }
   .movie-list{
-    width: 70%;
+    width: 85%;
   }
   .parallax{
     background-position: 0 50%;
@@ -774,8 +797,12 @@ input.password{
   .input-form{
     width: 80%;
   } 
-  .recommended-movies .movie-img{
-    width: 10rem;
+  .recommended-movies {
+    flex-wrap: wrap;
+    row-gap: 2rem;
+  }
+  .recommended-movies .movie-card{
+    width: 34%;
   }
   .movie-name{
     font-size: 1.3rem;

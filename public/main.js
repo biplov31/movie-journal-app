@@ -25,6 +25,7 @@ let movieGenre = document.querySelector('.genre')
 let movieTitle = document.querySelector('.title')
 let moviePoster = document.querySelector('.poster')
 let bookmarkStatus = false;
+let isMoviePresent = false;
 
 // auto-complete search suggestions
 const searchResults = document.querySelector('.result-list')
@@ -55,7 +56,7 @@ function displayMovieList(movies){
     let resultListItem = document.createElement('div')
     resultListItem.dataset.id = movie.id
     resultListItem.classList.add('result-list-item')
-    if(movie.poster_path != "N/A"){
+    if(movie.poster_path){
       movieThumb = `https://image.tmdb.org/t/p/w92/${movie.poster_path}`
     } else {
       movieThumb = '/icons/no-image.png'
@@ -108,45 +109,51 @@ async function fetchMovies(url) {
 
 // fetch details for a particular movie based on an id
 async function getMovie(tmdbId){ 
-    try {      
-      const movie = await fetch(`https://api.themoviedb.org/3/movie/${tmdbId}?api_key=2732cfcce0a17dae7c833ce86f4238e7&append_to_response=credits,images&include_image_language=null,en`)
-      const data = await movie.json()
-      bookmarkBtn.classList.remove('hide-content')
-      movieId = data.imdb_id
-      console.log(data)
-      data.poster_path == 'N/A' ? moviePoster.src = '/icons/no-image.png' : moviePoster.src = `https://image.tmdb.org/t/p/w500${data.poster_path}`
+  try {      
+    const movie = await fetch(`https://api.themoviedb.org/3/movie/${tmdbId}?api_key=2732cfcce0a17dae7c833ce86f4238e7&append_to_response=credits,images&include_image_language=null,en`)
+    const data = await movie.json()
+    bookmarkBtn.classList.remove('hide-content')
+    movieId = data.imdb_id
+    if (!data.poster_path) {
+      moviePoster.src = '/icons/no-image.png'
+    } else {
+      moviePoster.src = `https://image.tmdb.org/t/p/w500${data.poster_path}`
       let intervalId
       let additionalImages
       movieContainer.addEventListener('mouseover', changePosters) 
-      function changePosters() {
-        additionalImages = data.images.posters
-        intervalId = setInterval(() => {
-          console.log(data.original_title);
-          moviePoster.src = `https://image.tmdb.org/t/p/w500${additionalImages[Math.floor(Math.random() * additionalImages.length)].file_path}`
-        }, 1500)
-      }
+
       movieContainer.addEventListener('mouseout', () => {
         clearInterval(intervalId)
         additionalImages = null
         moviePoster.src = `https://image.tmdb.org/t/p/w500${data.poster_path}`
-        movieContainer.removeEventListener('mouseover', changePosters) // if we don't remove the eventlistener data from previous fetches persist in our setInterval
+        // movieContainer.removeEventListener('mouseover', changePosters) // if we don't remove the eventlistener data from previous fetches persist in our setInterval
       })
-      
-      movieTitle.innerText = data.original_title
-      
-      let genreNames = data.genres.map(genre => genre['name'])
-      movieGenre.innerText = genreNames.join(', ')
+      function changePosters() {
+        additionalImages = data.images.posters
+        if (additionalImages.length > 0) {
+          intervalId = setInterval(() => {
+            moviePoster.src = `https://image.tmdb.org/t/p/w500${additionalImages[Math.floor(Math.random() * additionalImages.length)].file_path}`
+          }, 1500)
+        }
+      }
+    } 
+    
+    movieTitle.innerText = data.original_title
+    
+    let genreNames = data.genres.map(genre => genre['name'])
+    movieGenre.innerText = genreNames.join(', ')
 
-      document.querySelector('.actors').innerText = 'Starring: ' + data.credits.cast.slice(0, 4).map(actor => actor.original_name).join(', ')
-      moviePlot.classList.remove('hide-content')
-      moviePlot.innerText = data.overview
+    document.querySelector('.actors').innerText = 'Starring: ' + data.credits.cast.slice(0, 4).map(actor => actor.original_name).join(', ')
+    moviePlot.classList.remove('hide-content')
+    moviePlot.innerText = data.overview
 
-      checkPreviousBookmark(movieId)
-      getPreviousReviews(movieId)
-    } catch (error) {
-      console.error(error)
-    }
+    checkPreviousBookmark(movieId)
+    getPreviousReviews(movieId)
+    isMoviePresent = true;
+  } catch (error) {
+    console.error(error)
   }
+}
   
 // sending the Imdb Id of a movie to our server so we can display the reviews made for that particular movie after grabbing it from the database. We cannot use the GET method here because it doesn't have a body (we could use query parameter though), but POST method has a body through which we can send data to the server
 async function getPreviousReviews(movieId) {
@@ -176,34 +183,34 @@ async function displayReviews(reviews, user){
     return
   }
   reviews.forEach((item) => {
-      if(item.review !== undefined){
-        let newReview = document.createElement('li')
-        newReview.classList.add('review')
-        newReview.innerHTML = 
-          `<span class="data-id hide-content">${item._id}</span>`
-          + `<p class="review-statement">${item.review}</p>`
-          + `<span class="score">${item.score}</span>`
-          + `<span>${item.likes}</span>`
+    if(item.review !== undefined){
+      let newReview = document.createElement('li')
+      newReview.classList.add('review')
+      newReview.innerHTML = 
+        `<span class="data-id hide-content">${item._id}</span>`
+        + `<p class="review-statement">${item.review}</p>`
+        + `<span class="score">${item.score}</span>`
+        + `<span>${item.likes}</span>`
 
-          let likeBtn = document.createElement('span')
-          if(user && item.likedBy.includes(user)){  // in our database, reviews have an attribute called 'likedBy' which is an array that stored id of the users who have liked that particular review. if the array has the id of the currentUser, it means the logged in user has liked that particular review and hence the like button must be active 
-            likeBtn.classList.add('fa', 'fa-thumbs-up', 'liked')
-          } else {
-            likeBtn.classList.add('fa', 'fa-thumbs-up')
-          } 
-          likeBtn.addEventListener('click', likeReview)
-          newReview.appendChild(likeBtn)
+        let likeBtn = document.createElement('span')
+        if(user && item.likedBy.includes(user)){  // in our database, reviews have an attribute called 'likedBy' which is an array that stored id of the users who have liked that particular review. if the array has the id of the currentUser, it means the logged in user has liked that particular review and hence the like button must be active 
+          likeBtn.classList.add('fa', 'fa-thumbs-up', 'liked')
+        } else {
+          likeBtn.classList.add('fa', 'fa-thumbs-up')
+        } 
+        likeBtn.addEventListener('click', likeReview)
+        newReview.appendChild(likeBtn)
 
-          if(user == item.user){  // if the active user matches the 'user' attribute of a review object i.e. the active user is the auther of a review, only then they will have access to the delete button
-            let deleteBtn = document.createElement('span')
-            deleteBtn.classList.add('fa', 'fa-trash')
-            deleteBtn.addEventListener('click', deleteReview)
-            newReview.append(deleteBtn)
-          }
+        if(user == item.user){  // if the active user matches the 'user' attribute of a review object i.e. the active user is the auther of a review, only then they will have access to the delete button
+          let deleteBtn = document.createElement('span')
+          deleteBtn.classList.add('fa', 'fa-trash')
+          deleteBtn.addEventListener('click', deleteReview)
+          newReview.append(deleteBtn)
+        }
 
-        reviewList.appendChild(newReview) 
-      }  
-    })     
+      reviewList.appendChild(newReview) 
+    }  
+  })     
 }
 
 // if the movie has already been bookmarked before the bookmark button should be active
@@ -247,7 +254,6 @@ bookmarkBtn.addEventListener('click', async () => {
       })
     })
     const bookmarkedMovie = await response.json()
-    console.log(bookmarkedMovie)
   } else {
     const response = await fetch('watchList/removeBookmark', {
       method: 'delete',
@@ -257,7 +263,6 @@ bookmarkBtn.addEventListener('click', async () => {
       })
     })  
     const unbookmarkedMovie = await response.json()
-    console.log(unbookmarkedMovie)
   }
 })
 
@@ -268,8 +273,7 @@ reviewBtn.addEventListener('click', addReview)
 async function addReview(){
   const review = document.querySelector('.movie-review-field').value
   const score = document.querySelector('#score').value
-  if(review || score){
-    
+  if(isMoviePresent && (review || score)){    
     try{
       const response = await fetch('reviews/addReview', {
         method: 'post',
@@ -329,7 +333,7 @@ async function deleteReview(){
     console.log(err)
   }
 }
-
+// continuously pressing the like button changes the like count non-linearly/randomly
 async function likeReview(){
   let likeBtn = this.parentElement.children[4]
   likeBtn.classList.toggle('liked')
@@ -353,7 +357,6 @@ async function likeReview(){
       // showLoginModal()
     } else {
       const data = await response.json()
-      console.log(data)
       likesContainer.innerHTML = `<span>${data.updatedLikes}</span>`  // updating a part of the DOM without requiring a full page refresh
     }  
   } catch(err) {
@@ -404,10 +407,10 @@ async function getRecommendations(genreIds, status){
     movieCard.dataset.id = movies[r].id
     movieCard.classList.add('movie-card')
     if(movies[r].poster_path == null){
-      movieCard.innerHTML = `<img class="movie-img src="/icons/no-image.png">`
+      movieCard.innerHTML = `<img loading="lazy" class="movie-img src="/icons/no-image.png">`
       + `<div class="movie-name">${movies[r].title}</div>`
     } else {
-      movieCard.innerHTML = `<img class="movie-img" src="https://image.tmdb.org/t/p/w342/${movies[r].poster_path}" alt="">`
+      movieCard.innerHTML = `<img loading="lazy" class="movie-img" src="https://image.tmdb.org/t/p/w342/${movies[r].poster_path}" alt="">`
       + `<div class="movie-name">${movies[r].title}</div>`
     }
     movieCard.addEventListener('click', () => {

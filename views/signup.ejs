@@ -21,10 +21,10 @@
         <% }) %>    
       <% } %>
       <form action="/signup" method="post" class="input-form">
-        <input class="input-field username" type="text" name="username" placeholder="Username">
-        <input class="input-field email" type="email" name="email" placeholder="Email">
-        <input class="input-field password" type="password" name="password" placeholder="Password">
-        <input class="input-field password" type="password" name="rePassword" placeholder="Confirm password">
+        <input class="input-field username" type="text" name="username" placeholder="Username" required>
+        <input class="input-field email" type="email" name="email" placeholder="Email" required>
+        <input class="input-field password" type="password" name="password" placeholder="Password" required>
+        <input class="input-field password" type="password" name="rePassword" placeholder="Confirm password" required>
         <button type="submit" class="submit-btn">Sign Up</button>
         <span>Already have an account? <a href="/login" class="login-link">Log In</a></span>
       </form>

@@ -22,8 +22,8 @@
         <% }) %>    
       <% } %>
       <form action="/login" method="post" class="input-form">
-        <input class="input-field email" type="email" name="email" placeholder="Email">
-        <input class="input-field password" type="password" name="password" placeholder="Password">
+        <input class="input-field email" type="email" name="email" placeholder="Email" required>
+        <input class="input-field password" type="password" name="password" placeholder="Password" required>
         <button type="submit" class="submit-btn">Log In</button>
         <span>Don't have an account yet? <a href="/signup" class="signup-link">Sign up</a></span>
       </form>

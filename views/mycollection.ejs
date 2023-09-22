@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Collection</title>
+  <title>Collection</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <div class="collection-container">
     <div class="parallax header-content">
-      <div class="par-text"><span>Movie Collection</span></div>
+      <div class="par-text"><span>My Collection</span></div>
     </div>
 
     <div class="main-content">
@@ -22,12 +22,12 @@
         <% } %>  
         <% for(let i=0; i<movies.length; i++){ %>
           <div class="listed-movie">
-            <img class="poster" src="<%= movies[i].posterLink %>" alt="POSTER">
+            <img class="poster" loading="lazy" src="<%= movies[i].posterLink %>" alt="POSTER">
             <div class="listed-movie-content">
               <h3 class="title"><%= movies[i].movieTitle %></h3>
               <span class="score"><%= movies[i].score %></span>
               <span class="genre"><%= movies[i].genre %></span>
-              <p>"<%= movies[i].review%>"</p>
+              <p><%= movies[i].review%></p>
             </div>  
           </div>
         <% } %>

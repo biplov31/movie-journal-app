@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Collection</title>
+  <title>Watchlist</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -22,7 +22,7 @@
         <% } %>  
         <% for(let i=0; i<movies.length; i++){ %>
           <div class="watchlisted-movie listed-movie">
-            <img class="poster" src="<%= movies[i].posterLink%>" alt="">
+            <img loading="lazy" class="poster" src="<%= movies[i].posterLink%>" alt="">
             <div class="listed-movie-content">
               <h3 class="title"><%= movies[i].movieTitle %></h3>
               <span class="genre"><%= movies[i].genre %></span>
