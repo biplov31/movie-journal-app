@@ -2,6 +2,9 @@ const User = require('../models/User')
 const bcrypt = require('bcryptjs')
 
 exports.getSignup = async (req, res) => {
+  if (req.session.currentUser) {
+    return res.redirect('/')
+  }
   res.render('signup.ejs')
 }
 
@@ -38,6 +41,9 @@ exports.postSignup = async (req, res, next) => {
 }
 
 exports.getLogin = (req, res) => {
+  if (req.session.currentUser) {
+    return res.redirect('/')
+  }
   res.render('login.ejs')
 }
 
